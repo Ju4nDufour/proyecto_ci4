@@ -29,8 +29,8 @@
         <tr>
           <th style="width:90px">#</th>
           <th>Carreras</th>
-          <th style="width:160px">Código</th>
-          <th class="text-end" style="width:220px">Acciones</th>
+      
+          <th class="text-end" style="width:280px">Acciones</th>
         </tr>
       </thead>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -39,7 +39,6 @@
         <tr>
           <td><?= $c['id_carrera'] ?></td>
           <td><?= esc($c['nombre']) ?></td>
-          <td><?= esc($c['codigo']) ?></td>
           <td class="text-end">
             <!-- EDITAR en modal -->
             <button
@@ -47,7 +46,7 @@
               class="btn btn-sm btn-outline-secondary btn-edit"
               data-id="<?= $c['id_carrera'] ?>"
               data-nombre="<?= esc($c['nombre']) ?>"
-              data-codigo="<?= esc($c['codigo']) ?>">
+            >
               Editar
             </button>
 
@@ -79,10 +78,7 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" class="form-control" required>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Código</label>
-          <input name="codigo" class="form-control" required>
-        </div>
+    
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary">Guardar</button>
@@ -105,10 +101,7 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" id="editNombre" class="form-control" required>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Código</label>
-          <input name="codigo" id="editCodigo" class="form-control" required>
-        </div>
+        
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary">Guardar cambios</button>
@@ -124,7 +117,7 @@
     const modal   = new bootstrap.Modal(modalEl);
     const form    = document.getElementById('formEditarCarrera');
     const inputNombre = document.getElementById('editNombre');
-    const inputCodigo = document.getElementById('editCodigo');
+    
 
     // ⚠️ NUEVO: base correcta usando site_url
     const updateBase = "<?= site_url('carreras/update') ?>";
@@ -133,10 +126,10 @@
       btn.addEventListener('click', () => {
         const id     = btn.dataset.id;
         const nombre = btn.dataset.nombre;
-        const codigo = btn.dataset.codigo;
+        
 
         inputNombre.value = nombre;
-        inputCodigo.value = codigo;
+        
 
         // 👇 Queda /proyecto_ci4/public/carreras/update/{id}
         form.action = `${updateBase}/${id}`;
