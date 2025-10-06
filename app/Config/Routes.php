@@ -50,3 +50,6 @@ $routes->group('profesores', function($routes) {
     $routes->post('store', 'ProfesoresController::store');
     $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
 });
+
+$routes->get('/', 'Dashboard::index'); // Página de inicio por defecto
+$routes->get('dashboard', 'Dashboard::index'); // Ruta por si se accede por /dashboard
