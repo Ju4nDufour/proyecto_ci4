@@ -45,3 +45,10 @@
 <?= $this->renderSection('scripts') ?>
 </body>
 </html>
+
+<head>
+  <meta charset="utf-8">
+  <title><?= esc($title ?? 'Registro') ?></title>
+  <link rel="stylesheet" href="<?= base_url('assets/styles.css') ?>">
+  <?= csrf_meta() ?>
+</head>
