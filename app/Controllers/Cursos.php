@@ -1,22 +1,28 @@
 <?php
-
 namespace App\Controllers;
-
+use App\Models\CarreraModel;
 use App\Models\CursoModel;
-use CodeIgniter\Controller;
 
 class Cursos extends BaseController
 {
     public function index()
     {
-        $model = new CursoModel();
+        $carreraModel = new CarreraModel();
+        $cursoModel = new CursoModel();
 
-        $cursos = $model
-            ->select('Curso.*, Carrera.nombre as nombre_carrera')
-            ->join('Carrera', 'Carrera.id_carrera = Curso.id_carrera')
-            ->orderBy('Curso.nombre')
-            ->findAll();
+        $carreras = $carreraModel->orderBy('nombre')->findAll();
+        $cursosPorCarrera = [];
 
-        return view('cursos/index', ['cursos' => $cursos]);
+        foreach ($carreras as $carrera) {
+            $cursos = $cursoModel
+                ->where('id_carrera', $carrera['id_carrera'])
+                ->orderBy('nombre')
+                ->findAll();
+            $cursosPorCarrera[$carrera['nombre']] = $cursos;
+        }
+
+        return view('cursos/index', [
+            'cursosPorCarrera' => $cursosPorCarrera
+        ]);
     }
 }
