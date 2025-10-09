@@ -20,11 +20,8 @@
     </button>
     <div id="mainNav" class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto">
-<<<<<<< HEAD
-        <a href="<?= base_url('dashboard') ?>"  class="nav-link">Dashboard</a>
-=======
+
         <li class="nav-item"><a class="nav-link" href="<?= site_url('dashboard') ?>">Dashboard</a></li>
->>>>>>> 881adbc0b7a2e0355da68608fe4963ec5166d2c0
         <li class="nav-item"><a class="nav-link" href="<?= site_url('alumnos') ?>">Alumnos</a></li>
         <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carreras</a></li>
         <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Cursos</a></li>
