@@ -50,3 +50,4 @@ $routes->group('profesores', function($routes) {
     $routes->post('store', 'ProfesoresController::store');
     $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
 });
+$routes->get('dashboard', 'Dashboard::index');
