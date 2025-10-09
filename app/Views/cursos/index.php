@@ -1,43 +1,50 @@
-<!-- app/Views/cursos/index.php -->
 <?= $this->extend('layouts/app') ?>
 <?= $this->section('content') ?>
 
-<h1 class="h3 mb-3">Cursos</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <form action="<?= base_url('cursos') ?>" method="get" class="d-flex">
+            <input type="text" name="buscar" placeholder="Buscar por nombre o código..." class="form-control me-2">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+        <a href="<?= base_url('cursos/crear') ?>" class="btn btn-primary">+ Nuevo curso</a>
+    </div>
 
-<?php if ($ok = session('ok')): ?><div class="alert alert-success"><?= esc($ok) ?></div><?php endif; ?>
-<?php if ($errors = session('errors')): ?><div class="alert alert-danger"><?= implode('<br>', $errors) ?></div><?php endif; ?>
-
-<form class="row g-2 mb-3" method="post" action="/cursos/store">
-  <div class="col-md-3">
-    <select name="carrera_id" class="form-select" required>
-      <option value="">-- Carrera --</option>
-      <?php foreach($carreras as $car): ?>
-        <option value="<?= $car['id'] ?>"><?= esc($car['nombre']) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-  <div class="col-md-3"><input name="nombre" class="form-control" placeholder="Nombre del curso" required></div>
-  <div class="col-md-2"><input type="number" name="anio" class="form-control" placeholder="Año (opcional)"></div>
-  <div class="col-md-3"><input name="descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
-  <div class="col-md-1"><button class="btn btn-primary w-100">+ Crear</button></div>
-</form>
-
-<table class="table table-striped">
-  <thead><tr><th>#</th><th>Curso</th><th>Carrera</th><th>Año</th><th></th></tr></thead>
-  <tbody>
-    <?php foreach($cursos as $c): ?>
-      <tr>
-        <td><?= $c['id'] ?></td>
-        <td><?= esc($c['nombre']) ?></td>
-        <td><?= esc($c['carrera']) ?></td>
-        <td><?= esc($c['anio']) ?></td>
-        <td class="text-end">
-          <a class="btn btn-sm btn-outline-secondary" href="/cursos/edit/<?= $c['id'] ?>">Editar</a>
-          <a class="btn btn-sm btn-outline-danger" href="/cursos/delete/<?= $c['id'] ?>" onclick="return confirm('¿Eliminar?')">Borrar</a>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
+    <div class="card p-3">
+        <h2>📚 Listado de Cursos</h2>
+        <table class="table table-bordered mt-3">
+            <thead class="table-light">
+                <tr>
+                    
+                    <th>Nombre</th>
+                    
+                    <th>Carrera</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $i = 1; foreach ($cursos as $curso): ?>
+                <tr>
+                    <td><?= $i++ ?></td>
+                    <td><?= esc($curso['nombre']) ?></td>
+                    <td><?= esc($curso['nombre_carrera']) ?></td>
+                    <td>
+                        <a href="<?= base_url('cursos/editar/'.$curso['id_curso']) ?>" class="btn btn-sm btn-primary">Editar</a>
+                        <form action="<?= base_url('cursos/eliminar/'.$curso['id_curso']) ?>" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este curso?');">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php if(empty($cursos)): ?>
+                <tr>
+                    <td colspan="5" class="text-center">No se encontraron cursos.</td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <?= $this->endSection() ?>

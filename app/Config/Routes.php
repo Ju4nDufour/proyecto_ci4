@@ -38,11 +38,11 @@ $routes->group('carreras', function($routes) {
 });
 
 $routes->group('cursos', function($routes){
-    $routes->get('/', 'CursosController::index');
-    $routes->post('store', 'CursosController::store');
-    $routes->get('edit/(:num)', 'CursosController::edit/$1');
-    $routes->post('update/(:num)', 'CursosController::update/$1');
-    $routes->get('delete/(:num)', 'CursosController::delete/$1');
+    $routes->get('/', 'Cursos::index');
+    $routes->post('store', 'Cursos::store');
+    $routes->get('edit/(:num)', 'Cursos::edit/$1');
+    $routes->post('update/(:num)', 'Cursos::update/$1');
+    $routes->get('delete/(:num)', 'Cursos::delete/$1');
 });
 
 $routes->group('profesores', function($routes) {
