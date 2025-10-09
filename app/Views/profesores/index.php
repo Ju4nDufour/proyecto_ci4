@@ -34,6 +34,15 @@
                 <?= csrf_field() ?>
                 <button class="btn btn-sm btn-outline-danger">Eliminar</button>
               </form>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary btn-edit"
+                data-id="<?= $p['id_profesor'] ?>"
+                data-nombre="<?= esc($p['nombre']) ?>"
+                data-email="<?= esc($p['email']) ?>"
+              >
+                Editar.
+              </button>
             </td>
           </tr>
         <?php endforeach; ?>
