@@ -6,9 +6,18 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controllers\\Alumnos' => $baseDir . '/app/Controllers/Alumnos.php',
     'App\\Controllers\\BaseController' => $baseDir . '/app/Controllers/BaseController.php',
+    'App\\Controllers\\CarrerasController' => $baseDir . '/app/Controllers/CarrerasController.php',
+    'App\\Controllers\\Cursos' => $baseDir . '/app/Controllers/Cursos.php',
+    'App\\Controllers\\Dashboard' => $baseDir . '/app/Controllers/Dashboard.php',
     'App\\Controllers\\Home' => $baseDir . '/app/Controllers/Home.php',
+    'App\\Controllers\\ProfesoresController' => $baseDir . '/app/Controllers/ProfesoresController.php',
     'App\\Database\\Seeds\\DatosBaseSeeder' => $baseDir . '/app/Database/Seeds/DatosBaseSeeder.php',
+    'App\\Models\\AlumnoModel' => $baseDir . '/app/Models/AlumnoModel.php',
+    'App\\Models\\CarreraModel' => $baseDir . '/app/Models/CarreraModel.php',
+    'App\\Models\\CursoModel' => $baseDir . '/app/Models/CursoModel.php',
+    'App\\Models\\ProfesorModel' => $baseDir . '/app/Models/ProfesorModel.php',
     'CodeIgniter\\API\\ResponseTrait' => $vendorDir . '/codeigniter4/framework/system/API/ResponseTrait.php',
     'CodeIgniter\\Autoloader\\Autoloader' => $vendorDir . '/codeigniter4/framework/system/Autoloader/Autoloader.php',
     'CodeIgniter\\Autoloader\\FileLocator' => $vendorDir . '/codeigniter4/framework/system/Autoloader/FileLocator.php',

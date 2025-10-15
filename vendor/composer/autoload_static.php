@@ -100,9 +100,18 @@ class ComposerStaticInit657ac079313fab046eb8c29fe1d6992b
     );
 
     public static $classMap = array (
+        'App\\Controllers\\Alumnos' => __DIR__ . '/../..' . '/app/Controllers/Alumnos.php',
         'App\\Controllers\\BaseController' => __DIR__ . '/../..' . '/app/Controllers/BaseController.php',
+        'App\\Controllers\\CarrerasController' => __DIR__ . '/../..' . '/app/Controllers/CarrerasController.php',
+        'App\\Controllers\\Cursos' => __DIR__ . '/../..' . '/app/Controllers/Cursos.php',
+        'App\\Controllers\\Dashboard' => __DIR__ . '/../..' . '/app/Controllers/Dashboard.php',
         'App\\Controllers\\Home' => __DIR__ . '/../..' . '/app/Controllers/Home.php',
+        'App\\Controllers\\ProfesoresController' => __DIR__ . '/../..' . '/app/Controllers/ProfesoresController.php',
         'App\\Database\\Seeds\\DatosBaseSeeder' => __DIR__ . '/../..' . '/app/Database/Seeds/DatosBaseSeeder.php',
+        'App\\Models\\AlumnoModel' => __DIR__ . '/../..' . '/app/Models/AlumnoModel.php',
+        'App\\Models\\CarreraModel' => __DIR__ . '/../..' . '/app/Models/CarreraModel.php',
+        'App\\Models\\CursoModel' => __DIR__ . '/../..' . '/app/Models/CursoModel.php',
+        'App\\Models\\ProfesorModel' => __DIR__ . '/../..' . '/app/Models/ProfesorModel.php',
         'CodeIgniter\\API\\ResponseTrait' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/ResponseTrait.php',
         'CodeIgniter\\Autoloader\\Autoloader' => __DIR__ . '/..' . '/codeigniter4/framework/system/Autoloader/Autoloader.php',
         'CodeIgniter\\Autoloader\\FileLocator' => __DIR__ . '/..' . '/codeigniter4/framework/system/Autoloader/FileLocator.php',
