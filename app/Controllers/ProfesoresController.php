@@ -16,8 +16,32 @@ class ProfesoresController extends BaseController
     public function store()
     {
         $model = new ProfesorModel();
-        $model->save($this->request->getPost());
+
+        $data = [
+            'nombre'   => $this->request->getPost('nombre'),
+            'email'    => $this->request->getPost('email'),
+            'contacto' => $this->request->getPost('contacto'),
+            'DNI'      => $this->request->getPost('DNI'),
+        ];
+
+        $model->save($data);
         return redirect()->to('/profesores')->with('ok', 'Profesor agregado con éxito');
+    }
+
+    public function update($id)
+    {
+        $model = new ProfesorModel();
+
+        $data = [
+            'id_profesor' => $id,
+            'nombre'      => $this->request->getPost('nombre'),
+            'email'       => $this->request->getPost('email'),
+            'contacto'    => $this->request->getPost('contacto'),
+            'DNI'         => $this->request->getPost('DNI'),
+        ];
+
+        $model->save($data);
+        return redirect()->to('/profesores')->with('ok', 'Profesor actualizado con éxito');
     }
 
     public function delete($id)

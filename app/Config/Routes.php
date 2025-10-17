@@ -49,6 +49,8 @@ $routes->group('profesores', function($routes) {
     $routes->get('/', 'ProfesoresController::index');
     $routes->post('store', 'ProfesoresController::store');
     $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
+    $routes->post('update/(:num)', 'ProfesoresController::update/$1');
+
 });
 
 
