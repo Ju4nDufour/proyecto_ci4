@@ -5,56 +5,72 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-# $routes->get('/', 'Home::index');
 
-// $routes->get('/', 'Home::index');   // ← desactivar esta
+//--------------------- Crear Admin --------------------
+$routes->get('create-admin', 'CreateAdminController::index');
+
+//--------------------- Setup Groups --------------------
+$routes->get('setup-groups', 'SetupGroupsController::index');
+
+// Página principal (HOME con estadísticas)
 $routes->get('/', static function () {
-    // (opcional) conteos reales; si no querés DB, ponelos en 0
     $db = \Config\Database::connect();
-    return view('dashboard', [
-        'alumnosCount'      => $db->table('alumno')->countAllResults(),
-        'carrerasCount'     => $db->table('carrera')->countAllResults(),
-        'cursosCount'       => $db->table('curso')->countAllResults(),
-        'profesoresCount'   => $db->table('profesor')->countAllResults(),
-        'inscripcionesCount'=> $db->table('inscripcion')->countAllResults(),
+    return view('home', [
+        'alumnosCount'       => $db->table('alumno')->countAllResults(),
+        'carrerasCount'      => $db->table('carrera')->countAllResults(),
+        'cursosCount'        => $db->table('curso')->countAllResults(),
+        'profesoresCount'    => $db->table('profesor')->countAllResults(),
+        'inscripcionesCount' => $db->table('inscripcion')->countAllResults(),
     ]);
 });
 
-$routes->get('alumnos', 'Alumnos::index');
-$routes->post('alumnos', 'Alumnos::store'); // crear
-$routes->put('alumnos/(:num)', 'Alumnos::update/$1');  // actualizar (method spoofing)
-$routes->delete('alumnos/(:num)', 'Alumnos::delete/$1'); // eliminar (method spoofing)
+// -------------------- AUTH PERSONALIZADO --------------------
+$routes->group('auth', function($routes) {
+    $routes->get('login', 'AuthController::login');
+    $routes->post('attemptLogin', 'AuthController::attemptLogin');
+    $routes->get('logout', 'AuthController::logout');
+});
 
-// Carreras
+// -------------------- ALUMNOS --------------------
+$routes->group('alumnos', function($routes) {
+    $routes->get('/', 'Alumnos::index');
+    $routes->post('/', 'Alumnos::store');
+    $routes->put('(:num)', 'Alumnos::update/$1');
+    $routes->delete('(:num)', 'Alumnos::delete/$1');
+});
+
+// -------------------- CARRERAS --------------------
 $routes->group('carreras', function($routes) {
     $routes->get('/', 'CarrerasController::index');
-    // Crear (ya lo tenés si usás el modal del index)
     $routes->post('store', 'CarrerasController::store');
-    // Editar (pantalla de edición)
     $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
     $routes->post('update/(:num)', 'CarrerasController::update/$1');
-    // Eliminar (seguro con POST + spoof DELETE)
     $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
 });
 
-
-$routes->group('cursos', function($routes){
+// -------------------- CURSOS --------------------
+$routes->group('cursos', function($routes) {
     $routes->get('/', 'Cursos::index');
-    $routes->post('store', 'Cursos::store');
-    // Method spoofing para PUT y DELETE
-    $routes->put('update/(:num)', 'Cursos::update/$1');
-    $routes->delete('delete/(:num)', 'Cursos::delete/$1');
+    $routes->get('editar/(:num)', 'Cursos::editar/$1');
+    $routes->post('actualizar/(:num)', 'Cursos::actualizar/$1');
 });
 
+// -------------------- PROFESORES --------------------
 $routes->group('profesores', function($routes) {
     $routes->get('/', 'ProfesoresController::index');
     $routes->post('store', 'ProfesoresController::store');
-    $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
     $routes->post('update/(:num)', 'ProfesoresController::update/$1');
-
+    $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
 });
 
-
-
-$routes->get('/', 'Dashboard::index'); // Página de inicio por defecto
-$routes->get('dashboard', 'Dashboard::index'); // Ruta por si se accede por /dashboard
+// -------------------- DASHBOARD --------------------
+$routes->get('dashboard', static function () {
+    $db = \Config\Database::connect();
+    return view('dashboard/index', [
+        'alumnosCount'       => $db->table('alumno')->countAllResults(),
+        'carrerasCount'      => $db->table('carrera')->countAllResults(),
+        'cursosCount'        => $db->table('curso')->countAllResults(),
+        'profesoresCount'    => $db->table('profesor')->countAllResults(),
+        'inscripcionesCount' => $db->table('inscripcion')->countAllResults(),
+    ]);
+});

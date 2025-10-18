@@ -28,7 +28,7 @@
       <td><?= esc($p['nombre']) ?></td>
       <td><?= esc($p['email']) ?></td>
       <td><?= esc($p['contacto']) ?></td>
-      <td><?= esc($p['DNI']) ?></td>
+      <td><?= esc($p['dni']) ?></td>
       <td class="text-end">
         <form action="<?= site_url('profesores/delete/'.$p['id_profesor']) ?>" method="post" class="d-inline"
           onsubmit="return confirm('¿Eliminar profesor?');">
@@ -42,7 +42,7 @@
           data-nombre="<?= esc($p['nombre']) ?>"
           data-email="<?= esc($p['email']) ?>"
           data-contacto="<?= esc($p['contacto']) ?>"
-          data-dni="<?= esc($p['DNI']) ?>"
+          data-dni="<?= esc($p['dni']) ?>"
         >
           Editar
         </button>
