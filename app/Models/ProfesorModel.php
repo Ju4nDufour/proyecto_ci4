@@ -8,5 +8,11 @@ class ProfesorModel extends Model
 {
     protected $table      = 'profesor';
     protected $primaryKey = 'id_profesor';
-    protected $allowedFields = ['nombre', 'id_profesor', 'email'];
+
+    protected $allowedFields = [
+        'nombre',
+        'email',
+        'contacto',
+        'DNI'
+    ];
 }

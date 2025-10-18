@@ -37,18 +37,21 @@ $routes->group('carreras', function($routes) {
     $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
 });
 
+
 $routes->group('cursos', function($routes){
     $routes->get('/', 'Cursos::index');
     $routes->post('store', 'Cursos::store');
-    $routes->get('edit/(:num)', 'Cursos::edit/$1');
-    $routes->post('update/(:num)', 'Cursos::update/$1');
-    $routes->get('delete/(:num)', 'Cursos::delete/$1');
+    // Method spoofing para PUT y DELETE
+    $routes->put('update/(:num)', 'Cursos::update/$1');
+    $routes->delete('delete/(:num)', 'Cursos::delete/$1');
 });
 
 $routes->group('profesores', function($routes) {
     $routes->get('/', 'ProfesoresController::index');
     $routes->post('store', 'ProfesoresController::store');
     $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
+    $routes->post('update/(:num)', 'ProfesoresController::update/$1');
+
 });
 
 
