@@ -9,7 +9,9 @@ class CarreraModel extends Model
     protected $primaryKey    = 'id_carrera';    // PK real
     protected $returnType    = 'array';
     
+    protected $allowedFields = ['nombre', 'codigo'];
 
+    
     // Tu tabla no tiene created_at/updated_at/deleted_at
     protected $useTimestamps  = false;
     protected $useSoftDeletes = false;

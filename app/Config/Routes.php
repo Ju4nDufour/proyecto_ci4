@@ -7,6 +7,9 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Dashboard::index');
 $routes->get('dashboard', 'Dashboard::index');
 
+// LOGOUT - Definido ANTES de los grupos con filtros
+$routes->get('logout', 'Auth\LogoutController::logoutAction');
+
 $routes->group('', ['filter' => 'session'], static function (RouteCollection $routes) {
 
     // Solo Admin
@@ -35,7 +38,7 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->get('/', 'CarrerasController::index');
         $routes->post('store', 'CarrerasController::store');
         $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
-               $routes->post('update/(:num)', 'CarrerasController::update/$1');
+        $routes->post('update/(:num)', 'CarrerasController::update/$1');
         $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
     });
 
@@ -64,14 +67,11 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
     });
 });
 
-// Rutas de autenticación de Shield (login, logout, registro, magic-link, etc.)
+// Rutas de autenticación de Shield (login, registro, etc.)
 $routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static function (RouteCollection $routes) {
     // Login clásico
     $routes->get('login', 'LoginController::loginView');
     $routes->post('login', 'LoginController::loginAction');
-
-    // Logout
-    $routes->get('logout', 'LogoutController::logout');
 
     // Registro (deshabilitalo si no corresponde)
     $routes->get('register', 'RegisterController::registerView');
@@ -83,7 +83,7 @@ $routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static fun
     $routes->get('reset-password', 'ForgotPasswordController::resetPasswordView');
     $routes->post('reset-password', 'ForgotPasswordController::resetPasswordAction');
 
-    // Magic Link (necesario porque la vista de login llama a route_to('magic-link'))
+    // Magic Link
     $routes->get('magic-link', 'MagicLinkController::loginView');
     $routes->post('magic-link', 'MagicLinkController::loginAction');
     $routes->get('magic-link/verify', 'MagicLinkController::verify');

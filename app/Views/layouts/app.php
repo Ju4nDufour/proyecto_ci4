@@ -34,12 +34,6 @@ $user     = $isLogged ? $auth->user() : null;
 
         <div id="mainNav" class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav align-items-lg-center gap-lg-2">
-                <li class="nav-item">
-                    <a class="nav-link<?= current_url() === site_url('/') ? ' active' : '' ?>" href="<?= site_url('/') ?>">
-                        <i class="bi bi-house-door-fill me-1"></i>Home
-                    </a>
-                </li>
-
                 <?php if (! $isLogged): ?>
                     <li class="nav-item">
                         <a class="btn btn-outline-light" href="<?= site_url('login') ?>">
@@ -57,13 +51,12 @@ $user     = $isLogged ? $auth->user() : null;
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
+                    
+                    <!-- LOGOUT - Corregido: solo un botón GET -->
                     <li class="nav-item">
-                        <form action="<?= site_url('logout') ?>" method="post" class="d-inline">
-                            <?= csrf_field() ?>
-                            <button type="submit" class="btn btn-outline-light">
-                                <i class="bi bi-box-arrow-right me-1"></i>Logout
-                            </button>
-                        </form>
+                        <a href="<?= site_url('logout') ?>" class="btn btn-outline-light">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </a>
                     </li>
                 <?php endif; ?>
             </ul>
