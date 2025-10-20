@@ -9,8 +9,6 @@ class AlumnoModel extends Model
     protected $allowedFields = ['dni','nombre','email','fecha_nac','id_carrera'];
     protected $useTimestamps = false;
 
-
-
     // Validación básica para crear
     protected $validationRules = [
         'dni'        => 'required|exact_length[8]|is_natural_no_zero', // QUITAR is_unique

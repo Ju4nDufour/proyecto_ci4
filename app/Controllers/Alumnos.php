@@ -41,6 +41,7 @@ class Alumnos extends BaseController
             'email'      => $this->request->getPost('email'),
             'fecha_nac'  => $this->request->getPost('fecha_nac'),
             'id_carrera' => $this->request->getPost('id_carrera'),
+            'rol_id'      => $this->request->getPost('rol_id') ?? 3, // por si acaso
         ];
         if (!$m->insert($data, true)) {
             return redirect()->back()->with('errors', $m->errors())->withInput();
