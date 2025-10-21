@@ -41,4 +41,45 @@ class Validation extends BaseConfig
     // --------------------------------------------------------------------
     // Rules
     // --------------------------------------------------------------------
+
+    public $profesor = [
+    'nombre' => [
+        'label'  => 'Nombre',
+        'rules'  => 'required|min_length[8]',
+        'errors' => [
+            'required'    => 'El nombre es obligatorio.',
+            'min_length'  => 'El nombre debe tener al menos 8 caracteres.',
+        ],
+    ],
+    'email' => [
+        'label'  => 'Email',
+        'rules'  => 'required|valid_email|min_length[4]',
+        'errors' => [
+            'required'     => 'El email es obligatorio.',
+            'valid_email'  => 'Debe ser un email válido.',
+            'min_length'   => 'El email es muy corto.',
+        ],
+    ],
+    'contacto' => [
+        'label'  => 'Contacto',
+        'rules'  => 'required|numeric|min_length[10]|max_length[11]',
+        'errors' => [
+            'required'    => 'El contacto es obligatorio.',
+            'numeric'     => 'El contacto debe ser numérico.',
+            'min_length'  => 'El número debe tener al menos 10 dígitos.',
+            'max_length'  => 'El número no puede tener más de 11 dígitos.',
+        ],
+    ],
+    'DNI' => [
+        'label'  => 'DNI',
+        'rules'  => 'required|numeric|exact_length[8]',
+        'errors' => [
+            'required'      => 'El DNI es obligatorio.',
+            'numeric'       => 'El DNI debe ser numérico.',
+            'exact_length'  => 'El DNI debe tener exactamente 8 dígitos.',
+        ],
+    ],
+];
+
+
 }

@@ -9,53 +9,48 @@
 <?php if ($ok = session('ok')): ?>
   <div class="alert alert-success"><?= esc($ok) ?></div>
 <?php endif; ?>
-<?php if ($errors = session('errors')): ?>
-  <div class="alert alert-danger">
-    <ul class="mb-0"><?php foreach($errors as $e): ?><li><?= esc($e) ?></li><?php endforeach; ?></ul>
-  </div>
-<?php endif; ?>
 
 <div class="card">
   <div class="card-body">
     <table class="table table-striped">
       <thead>
-        <tr><th>#</th><th>Nombre</th><th>Email</th><th>Contacto</th><th>DNI</th><th class="text-end">Acciones</th></tr>
+        <tr><th>#</th><th>Nombre y Apellido</th><th>Email</th><th>Contacto</th><th>DNI</th><th class="text-end">Acciones</th></tr>
       </thead>
       <tbody>
-  <?php foreach($profesores as $p): ?>
-    <tr>
-      <td><?= $p['id_profesor'] ?></td>
-      <td><?= esc($p['nombre']) ?></td>
-      <td><?= esc($p['email']) ?></td>
-      <td><?= esc($p['contacto']) ?></td>
-      <td><?= esc($p['DNI']) ?></td>
-      <td class="text-end">
-        <form action="<?= site_url('profesores/delete/'.$p['id_profesor']) ?>" method="post" class="d-inline"
-          onsubmit="return confirm('¿Eliminar profesor?');">
-          <?= csrf_field() ?>
-          <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-        </form>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary btn-edit"
-          data-id="<?= $p['id_profesor'] ?>"
-          data-nombre="<?= esc($p['nombre']) ?>"
-          data-email="<?= esc($p['email']) ?>"
-          data-contacto="<?= esc($p['contacto']) ?>"
-          data-dni="<?= esc($p['DNI']) ?>"
-        >
-          Editar
-        </button>
-      </td>
-    </tr>
-  <?php endforeach; ?>
-</tbody>
+      <?php foreach($profesores as $p): ?>
+        <tr>
+          <td><?= $p['id_profesor'] ?></td>
+          <td><?= esc($p['nombre']) ?></td>
+          <td><?= esc($p['email']) ?></td>
+          <td><?= esc($p['contacto']) ?></td>
+          <td><?= esc($p['DNI']) ?></td>
+          <td class="text-end">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary btn-edit me-1"
+              data-id="<?= $p['id_profesor'] ?>"
+              data-nombre="<?= esc($p['nombre']) ?>"
+              data-email="<?= esc($p['email']) ?>"
+              data-contacto="<?= esc($p['contacto']) ?>"
+              data-dni="<?= esc($p['DNI']) ?>"
+            >
+              Editar
+            </button>
+            <form action="<?= site_url('profesores/delete/'.$p['id_profesor']) ?>" method="post" class="d-inline"
+              onsubmit="return confirm('¿Eliminar profesor?');">
+              <?= csrf_field() ?>
+              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
     </table>
   </div>
 </div>
 
 <!-- Modal CREAR -->
-<div class="modal fade" id="modalCrearProfesor" tabindex="-1" aria-hidden="true">
+<div class="modal fade <?= session('errors') ? 'show d-block' : '' ?>" id="modalCrearProfesor" tabindex="-1" aria-hidden="true" style="<?= session('errors') ? 'display:block;' : '' ?>">
   <div class="modal-dialog">
     <form class="modal-content" method="post" action="<?= site_url('profesores/store') ?>">
       <?= csrf_field() ?>
@@ -65,22 +60,34 @@
       </div>
       <div class="modal-body">
         <div class="mb-3">
-          <label class="form-label">Nombre</label>
-          <input name="nombre" class="form-control" required>
+          <label class="form-label">Nombre y Apellido</label>
+          <input name="nombre" class="form-control" value="<?= old('nombre') ?>" required>
+          <?php if (session('errors.nombre')): ?>
+            <div class="text-danger small"><?= esc(session('errors.nombre')) ?></div>
+          <?php endif; ?>
         </div>
         <div class="mb-3">
           <label class="form-label">Email</label>
-          <input name="email" class="form-control">
+          <input name="email" class="form-control" type="email" value="<?= old('email') ?>">
+          <?php if (session('errors.email')): ?>
+            <div class="text-danger small"><?= esc(session('errors.email')) ?></div>
+          <?php endif; ?>
         </div>
         <div class="mb-3">
-    <label class="form-label">Contacto</label>
-    <input name="contacto" type="number" class="form-control">
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">DNI</label>
-    <input name="DNI" type="number" class="form-control">
-  </div>
+          <label class="form-label">Contacto</label>
+          <input name="contacto" type="text" class="form-control" value="<?= old('contacto') ?>" pattern="\d{10,15}" maxlength="15" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          <?php if (session('errors.contacto')): ?>
+            <div class="text-danger small"><?= esc(session('errors.contacto')) ?></div>
+          <?php endif; ?>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">DNI</label>
+          <input name="DNI" type="text" class="form-control" value="<?= old('DNI') ?>" pattern="\d{8}" maxlength="8" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          <?php if (session('errors.DNI')): ?>
+            <div class="text-danger small"><?= esc(session('errors.DNI')) ?></div>
+          <?php endif; ?>
+        </div>
+        <input type="hidden" name="rol_id" value="2">
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary">Guardar</button>
@@ -100,20 +107,20 @@
       </div>
       <div class="modal-body">
         <div class="mb-3">
-          <label class="form-label">Nombre</label>
+          <label class="form-label">Nombre y Apellido</label>
           <input name="nombre" id="edit-nombre" class="form-control" required>
         </div>
         <div class="mb-3">
           <label class="form-label">Email</label>
-          <input name="email" id="edit-email" class="form-control">
+          <input name="email" id="edit-email" class="form-control" type="email">
         </div>
         <div class="mb-3">
           <label class="form-label">Contacto</label>
-          <input name="contacto" id="edit-contacto" type="number" class="form-control">
+          <input name="contacto" id="edit-contacto" type="text" class="form-control" pattern="\d{10,15}" maxlength="15" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
         <div class="mb-3">
           <label class="form-label">DNI</label>
-          <input name="DNI" id="edit-DNI" type="number" class="form-control">
+          <input name="DNI" id="edit-DNI" type="text" class="form-control" pattern="\d{8}" maxlength="8" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
       </div>
       <div class="modal-footer">
@@ -122,6 +129,7 @@
     </form>
   </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const modalEditar = new bootstrap.Modal(document.getElementById('modalEditarProfesor'));
@@ -140,8 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
       modalEditar.show();
     });
   });
+
+  // Si hay errores en la creación, mostrar modal automáticamente
+  <?php if (session('errors')): ?>
+    var modalCrear = new bootstrap.Modal(document.getElementById('modalCrearProfesor'));
+    modalCrear.show();
+  <?php endif; ?>
 });
 </script>
-
 
 <?= $this->endSection() ?>

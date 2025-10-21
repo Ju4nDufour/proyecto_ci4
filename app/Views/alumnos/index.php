@@ -107,6 +107,8 @@
             <?php foreach($carreras as $c): ?>
               <option value="<?= esc($c['id_carrera']) ?>"><?= esc($c['nombre']) ?></option>
             <?php endforeach; ?>
+            <input type="hidden" name="rol_id" value="3">
+
           </select>
           <div class="invalid-feedback">Seleccioná una carrera.</div>
         </div>
