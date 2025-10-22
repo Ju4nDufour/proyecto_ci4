@@ -34,15 +34,7 @@ class CarrerasController extends BaseController
         return redirect()->to('/carreras')->with('ok','Carrera creada');
     }
 
-    public function edit($id_carrera)
-    {
-        $model = new CarreraModel();
-        $data['carrera'] = $model->find($id_carrera);
-        if (!$data['carrera']) {
-            return redirect()->to('/carreras')->with('errors',['Carrera no encontrada']);
-        }
-        return view('carreras/edit', $data);
-    }
+    
 
     public function update($id_carrera)
     {

@@ -2,59 +2,90 @@
 
 use CodeIgniter\Router\RouteCollection;
 
-/**
- * @var RouteCollection $routes
- */
-# $routes->get('/', 'Home::index');
+/** @var RouteCollection $routes */
 
-// $routes->get('/', 'Home::index');   // ← desactivar esta
-$routes->get('/', static function () {
-    // (opcional) conteos reales; si no querés DB, ponelos en 0
-    $db = \Config\Database::connect();
-    return view('dashboard', [
-        'alumnosCount'      => $db->table('alumno')->countAllResults(),
-        'carrerasCount'     => $db->table('carrera')->countAllResults(),
-        'cursosCount'       => $db->table('curso')->countAllResults(),
-        'profesoresCount'   => $db->table('profesor')->countAllResults(),
-        'inscripcionesCount'=> $db->table('inscripcion')->countAllResults(),
-    ]);
+$routes->get('/', 'Dashboard::index');
+$routes->get('dashboard', 'Dashboard::index');
+
+// LOGOUT - Definido ANTES de los grupos con filtros
+$routes->get('logout', 'Auth\LogoutController::logoutAction');
+
+$routes->group('', ['filter' => 'session'], static function (RouteCollection $routes) {
+
+    // Solo Admin
+    $routes->group('', ['filter' => 'group:admin'], static function (RouteCollection $routes) {
+        $routes->get('usuarios', 'Usuarios::index');
+        $routes->post('usuarios', 'Usuarios::store');
+        $routes->put('usuarios/(:num)', 'Usuarios::update/$1');
+        $routes->delete('usuarios/(:num)', 'Usuarios::delete/$1');
+    });
+
+    // Admin + Profesor (lectura de usuarios, si aplica)
+    $routes->group('', ['filter' => 'group:admin,profesor'], static function (RouteCollection $routes) {
+        $routes->get('usuarios/listado', 'Usuarios::list');
+    });
+
+    // Alumnos
+    $routes->group('alumnos', static function (RouteCollection $routes) {
+        $routes->get('/', 'Alumnos::index');
+        $routes->post('/', 'Alumnos::store');
+        $routes->put('(:num)', 'Alumnos::update/$1');
+        $routes->delete('(:num)', 'Alumnos::delete/$1');
+    });
+
+    // Carreras
+    $routes->group('carreras', static function (RouteCollection $routes) {
+        $routes->get('/', 'CarrerasController::index');
+        $routes->post('store', 'CarrerasController::store');
+        $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
+        $routes->post('update/(:num)', 'CarrerasController::update/$1');
+        $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
+    });
+
+    // Cursos
+    $routes->group('cursos', static function (RouteCollection $routes) {
+        $routes->get('/', 'Cursos::index');
+        $routes->post('store', 'Cursos::store');
+        $routes->put('update/(:num)', 'Cursos::update/$1');
+        $routes->delete('delete/(:num)', 'Cursos::delete/$1');
+    });
+
+    // Profesores
+    $routes->group('profesores', static function (RouteCollection $routes) {
+        $routes->get('/', 'ProfesoresController::index');
+        $routes->post('store', 'ProfesoresController::store');
+        $routes->post('update/(:num)', 'ProfesoresController::update/$1');
+        $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
+    });
+
+    // Inscripciones
+    $routes->group('inscripciones', static function (RouteCollection $routes) {
+        $routes->get('/', 'Inscripciones::index');
+        $routes->post('store', 'Inscripciones::store');
+        $routes->post('update/(:num)', 'Inscripciones::update/$1');
+        $routes->post('delete/(:num)', 'Inscripciones::delete/$1');
+    });
 });
 
-$routes->get('alumnos', 'Alumnos::index');
-$routes->post('alumnos', 'Alumnos::store'); // crear
-$routes->put('alumnos/(:num)', 'Alumnos::update/$1');  // actualizar (method spoofing)
-$routes->delete('alumnos/(:num)', 'Alumnos::delete/$1'); // eliminar (method spoofing)
+// Rutas de autenticación de Shield (login, registro, etc.)
+$routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static function (RouteCollection $routes) {
+    // Login clásico
+    $routes->get('login', 'LoginController::loginView');
+    $routes->post('login', 'LoginController::loginAction');
 
-// Carreras
-$routes->group('carreras', function($routes) {
-    $routes->get('/', 'CarrerasController::index');
-    // Crear (ya lo tenés si usás el modal del index)
-    $routes->post('store', 'CarrerasController::store');
-    // Editar (pantalla de edición)
-    $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
-    $routes->post('update/(:num)', 'CarrerasController::update/$1');
-    // Eliminar (seguro con POST + spoof DELETE)
-    $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
+    // Registro (deshabilitalo si no corresponde)
+    $routes->get('register', 'RegisterController::registerView');
+    $routes->post('register', 'RegisterController::registerAction');
+
+    // Recuperación de contraseña
+    $routes->get('forgot-password', 'ForgotPasswordController::forgotPasswordView');
+    $routes->post('forgot-password', 'ForgotPasswordController::forgotPasswordAction');
+    $routes->get('reset-password', 'ForgotPasswordController::resetPasswordView');
+    $routes->post('reset-password', 'ForgotPasswordController::resetPasswordAction');
+
+    // Magic Link
+    $routes->get('magic-link', 'MagicLinkController::loginView');
+    $routes->post('magic-link', 'MagicLinkController::loginAction');
+    $routes->get('magic-link/verify', 'MagicLinkController::verify');
+    $routes->post('magic-link/resend', 'MagicLinkController::resend');
 });
-
-
-$routes->group('cursos', function($routes){
-    $routes->get('/', 'Cursos::index');
-    $routes->post('store', 'Cursos::store');
-    // Method spoofing para PUT y DELETE
-    $routes->put('update/(:num)', 'Cursos::update/$1');
-    $routes->delete('delete/(:num)', 'Cursos::delete/$1');
-});
-
-$routes->group('profesores', function($routes) {
-    $routes->get('/', 'ProfesoresController::index');
-    $routes->post('store', 'ProfesoresController::store');
-    $routes->post('delete/(:num)', 'ProfesoresController::delete/$1');
-    $routes->post('update/(:num)', 'ProfesoresController::update/$1');
-
-});
-
-
-
-$routes->get('/', 'Dashboard::index'); // Página de inicio por defecto
-$routes->get('dashboard', 'Dashboard::index'); // Ruta por si se accede por /dashboard
