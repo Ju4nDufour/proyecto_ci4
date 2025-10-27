@@ -65,6 +65,26 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->post('update/(:num)', 'Inscripciones::update/$1');
         $routes->post('delete/(:num)', 'Inscripciones::delete/$1');
     });
+    // Solo Admin
+$routes->group('', ['filter' => 'group:admin'], static function (RouteCollection $routes) {
+    // Listado general
+    $routes->get('usuarios', 'Usuarios::index');
+
+    // Crear nuevo usuario
+    $routes->get('usuarios/nuevo', 'Usuarios::create');
+    $routes->post('usuarios', 'Usuarios::store');
+
+    // Editar usuario
+    $routes->get('usuarios/editar/(:num)', 'Usuarios::edit/$1');
+    $routes->post('usuarios/actualizar/(:num)', 'Usuarios::update/$1');
+
+    // Eliminar usuario
+    $routes->get('usuarios/eliminar/(:num)', 'Usuarios::delete/$1');
+
+    // Búsqueda o filtrado
+    $routes->get('usuarios/buscar', 'Usuarios::buscar');
+});
+
 });
 
 // Rutas de autenticación de Shield (login, registro, etc.)
