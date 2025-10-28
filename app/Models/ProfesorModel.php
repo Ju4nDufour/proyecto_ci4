@@ -13,7 +13,8 @@ class ProfesorModel extends Model
         'nombre',
         'email',
         'contacto',
-        'DNI'
+        'DNI',
+        'user_id',
     ];
 
     // Validaciones

@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\ProfesorModel;
+use App\Models\UserModel;
+use CodeIgniter\Shield\Models\UserIdentityModel;
 
 class ProfesoresController extends BaseController
 {
@@ -10,6 +12,7 @@ class ProfesoresController extends BaseController
     {
         $model = new ProfesorModel();
         $data['profesores'] = $model->findAll();
+
         return view('profesores/index', $data);
     }
 
@@ -22,19 +25,15 @@ class ProfesoresController extends BaseController
             'email'    => $this->request->getPost('email'),
             'contacto' => $this->request->getPost('contacto'),
             'DNI'      => $this->request->getPost('DNI'),
-            'rol_id'   => $this->request->getPost('rol_id') ?? 2,
         ];
 
-        // Validar con las reglas definidas en el modelo
-        if (!$model->save($data)) {
-            // Si falla, volvemos al formulario con los errores y los datos cargados
+        if (! $model->save($data)) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('errors', $model->errors());
         }
 
-        // Si todo está bien
         return redirect()
             ->to('/profesores')
             ->with('ok', 'Profesor agregado con éxito');
@@ -44,6 +43,16 @@ class ProfesoresController extends BaseController
     {
         $model = new ProfesorModel();
 
+        $profesor = $model->find($id);
+        if (! $profesor) {
+            return redirect()->to('/profesores')->with('errors', ['Profesor no encontrado.']);
+        }
+
+        $model->setValidationRule(
+            'DNI',
+            "required|regex_match[/^[0-9]{8}$/]|is_unique[profesor.DNI,id_profesor,{$id}]"
+        );
+
         $data = [
             'id_profesor' => $id,
             'nombre'      => $this->request->getPost('nombre'),
@@ -52,12 +61,15 @@ class ProfesoresController extends BaseController
             'DNI'         => $this->request->getPost('DNI'),
         ];
 
-        // Validar con las reglas definidas en el modelo
-        if (!$model->save($data)) {
+        if (! $model->save($data)) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('errors', $model->errors());
+        }
+
+        if (! empty($profesor['user_id'])) {
+            $this->syncLinkedUserEmail((int) $profesor['user_id'], (string) $data['email']);
         }
 
         return redirect()
@@ -69,8 +81,36 @@ class ProfesoresController extends BaseController
     {
         $model = new ProfesorModel();
         $model->delete($id);
+
         return redirect()
             ->to('/profesores')
             ->with('ok', 'Profesor eliminado con éxito');
     }
+
+    protected function syncLinkedUserEmail(int $userId, string $email): void
+    {
+        $email = trim($email);
+
+        if ($email === '') {
+            return;
+        }
+
+        $userModel = new UserModel();
+        $userModel->update($userId, ['email' => $email]);
+
+        /** @var UserIdentityModel $identityModel */
+        $identityModel = model(UserIdentityModel::class);
+        $identity      = $identityModel
+            ->where('user_id', $userId)
+            ->where('type', 'email_password')
+            ->first();
+
+        if ($identity) {
+            $identityModel->save([
+                'id'     => $identity->id,
+                'secret' => $email,
+            ]);
+        }
+    }
+
 }
