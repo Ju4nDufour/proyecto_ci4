@@ -1,62 +1,48 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\UserModel;
 
-use App\Models\UsuariosModel;
-
-class Usuarios extends BaseController
+class Users extends BaseController
 {
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new UserModel();
+    }
+
+    // Listar todos los usuarios
     public function index()
     {
-        $model = new UsuariosModel();
-        $data['usuarios'] = $model->findAll();
+        $data['usuarios'] = $this->userModel->findAll();
         return view('usuarios/index', $data);
     }
 
+    // Crear usuario
     public function store()
     {
-        $model = new UsuariosModel();
-        $model->insert([
-            'nombre' => $this->request->getPost('nombre'),
-            'email' => $this->request->getPost('email'),
-            'rol' => $this->request->getPost('rol'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-        ]);
-        return redirect()->to('/usuarios');
+        $data = $this->request->getPost();
+        if ($this->userModel->insert($data)) {
+            return redirect()->to('/usuarios')->with('ok', 'Usuario creado correctamente');
+        }
+        return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
     }
 
-    public function edit($id)
-    {
-        $model = new UsuariosModel();
-        $data['usuario'] = $model->find($id);
-        return view('usuarios/editar', $data);
-    }
-
+    // Actualizar usuario
     public function update($id)
     {
-        $model = new UsuariosModel();
-        $model->update($id, [
-            'nombre' => $this->request->getPost('nombre'),
-            'email' => $this->request->getPost('email'),
-            'rol' => $this->request->getPost('rol')
-        ]);
-        return redirect()->to('/usuarios');
+        $data = $this->request->getPost();
+        if ($this->userModel->update($id, $data)) {
+            return redirect()->to('/usuarios')->with('ok', 'Usuario actualizado correctamente');
+        }
+        return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
     }
 
+    // Eliminar usuario
     public function delete($id)
     {
-        $model = new UsuariosModel();
-        $model->delete($id);
-        return redirect()->to('/usuarios');
-    }
-
-    public function buscar()
-    {
-        $texto = $this->request->getGet('texto');
-        $model = new UsuariosModel();
-        $data['usuarios'] = $model->like('nombre', $texto)
-                                 ->orLike('email', $texto)
-                                 ->findAll();
-        return view('usuarios/index', $data);
+        $this->userModel->delete($id);
+        return redirect()->to('/usuarios')->with('ok', 'Usuario eliminado correctamente');
     }
 }
