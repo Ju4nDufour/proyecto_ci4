@@ -15,6 +15,7 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
     // Solo Admin
     $routes->group('', ['filter' => 'group:admin'], static function (RouteCollection $routes) {
         $routes->get('usuarios', 'Usuarios::index');
+        $routes->get('usuarios/(:num)', 'Usuarios::show/$1');
         $routes->post('usuarios', 'Usuarios::store');
         $routes->put('usuarios/(:num)', 'Usuarios::update/$1');
         $routes->delete('usuarios/(:num)', 'Usuarios::delete/$1');
