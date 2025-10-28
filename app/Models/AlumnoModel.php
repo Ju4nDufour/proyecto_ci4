@@ -6,7 +6,7 @@ class AlumnoModel extends Model
 {
     protected $table      = 'alumno';
     protected $primaryKey = 'id_alumno';
-    protected $allowedFields = ['dni','nombre','email','fecha_nac','id_carrera'];
+    protected $allowedFields = ['dni','nombre','email','fecha_nac','id_carrera','user_id'];
     protected $useTimestamps = false;
 
     // Validación básica para crear
