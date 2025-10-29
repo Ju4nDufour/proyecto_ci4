@@ -354,40 +354,22 @@ class Usuarios extends BaseController
 
     protected function upsertIdentity(int $userId, string $email, ?string $password): void
     {
-        if ($email === '') {
+        /** @var \CodeIgniter\Shield\Entities\User|null $user */
+        $user = $this->users->find($userId);
+
+        if (! $user) {
             return;
         }
 
-        $identityModel = model(UserIdentityModel::class);
+        if ($email !== '') {
+            $user->email = $email;
+        }
 
-        $existing = $identityModel
-            ->where('user_id', $userId)
-            ->where('type', 'email_password')
-            ->first();
-
-        $passwordHash = null;
         if ($password !== null && $password !== '') {
-            $passwordHash = service('passwords')->hash($password);
+            $user->password = $password;
         }
 
-        $data = [
-            'user_id' => $userId,
-            'type'    => 'email_password',
-            'secret'  => $email,
-        ];
-
-        if ($passwordHash !== null) {
-            $data['secret2'] = $passwordHash;
-        }
-
-        if ($existing) {
-            $data['id'] = $existing->id;
-            if (! isset($data['secret2'])) {
-                $data['secret2'] = $existing->secret2;
-            }
-        }
-
-        $identityModel->save($data);
+        $this->users->save($user);
     }
 
     protected function prepareGroupOptions($authService): array
@@ -478,3 +460,5 @@ class Usuarios extends BaseController
         return $fallback !== '' ? $fallback : 'usuario_' . time();
     }
 }
+
+

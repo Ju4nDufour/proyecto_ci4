@@ -31,4 +31,18 @@ class ProfesorCursoModel extends Model
             'id_curso' => $id_curso
         ])->first() !== null;
     }
+
+    public function getAllWithDetalles(): array
+    {
+        return $this->select(
+            'profesor_curso.*, profesor.nombre AS profesor_nombre, profesor.DNI AS profesor_dni,' .
+            'curso.nombre AS curso_nombre, curso.codigo AS curso_codigo,' .
+            'carrera.nombre AS carrera_nombre'
+        )
+            ->join('profesor', 'profesor.id_profesor = profesor_curso.id_profesor')
+            ->join('curso', 'curso.id_curso = profesor_curso.id_curso')
+            ->join('carrera', 'carrera.id_carrera = curso.id_carrera', 'left')
+            ->orderBy('profesor_curso.id_profesor_curso', 'DESC')
+            ->findAll();
+    }
 }
