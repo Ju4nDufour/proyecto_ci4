@@ -2,7 +2,13 @@
 <?= $this->section('content') ?>
 
 <h3 class="mb-3">Mis inscripciones</h3>
-<?php if ($ok = session('ok')): ?><div class="alert alert-success"><?= esc($ok) ?></div><?php endif; ?>
+<?php if ($ok = session('ok')): ?>
+  <div class="alert alert-success"><?= esc($ok) ?></div>
+<?php elseif ($errors = session('errors')): ?>
+  <div class="alert alert-danger">
+    <ul class="mb-0"><?php foreach($errors as $e): ?><li><?= esc($e) ?></li><?php endforeach; ?></ul>
+  </div>
+<?php endif; ?>
 
 <table class="table table-striped">
   <thead><tr><th>Curso</th><th>Carrera</th><th>Modalidad</th><th>Turno</th></tr></thead>

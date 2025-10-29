@@ -31,4 +31,18 @@ class AlumnoCursoModel extends Model
             'id_curso'  => $id_curso
         ])->first() !== null;
     }
+
+    public function getAllWithDetalles(): array
+    {
+        return $this->select(
+            'alumno_curso.*, alumno.nombre AS alumno_nombre, alumno.dni AS alumno_dni,' .
+            'curso.nombre AS curso_nombre, curso.codigo AS curso_codigo,' .
+            'carrera.nombre AS carrera_nombre'
+        )
+            ->join('alumno', 'alumno.id_alumno = alumno_curso.id_alumno')
+            ->join('curso', 'curso.id_curso = alumno_curso.id_curso')
+            ->join('carrera', 'carrera.id_carrera = curso.id_carrera', 'left')
+            ->orderBy('alumno_curso.id_alumno_curso', 'DESC')
+            ->findAll();
+    }
 }

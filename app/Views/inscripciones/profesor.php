@@ -35,7 +35,6 @@
 <form method="post" action="<?= site_url('inscripciones/store') ?>">
   <?= csrf_field() ?>
   <input type="hidden" name="tipo" value="profesor">
-  <input type="hidden" name="id_profesor" value="<?= esc(session('profesor_id')) ?>">
   
   <div class="row g-2">
     <div class="col-md-8">
