@@ -43,16 +43,44 @@ $user     = $isLogged ? $auth->user() : null;
                 <?php else: ?>
                     <?php if ($user->inGroup('admin')): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= site_url('usuarios') ?>">Usuarios</a>
+                            <a class="nav-link" href="<?= site_url('usuarios') ?>">
+                                <i class="bi bi-people-fill me-1"></i>Usuarios
+                            </a>
                         </li>
                     <?php endif; ?>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('profesores') ?>">Profesor</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('alumnos') ?>">Alumno</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
-                    
-                    <!-- LOGOUT - Corregido: solo un botón GET -->
+
+                    <?php if ($user->inGroup('admin') || $user->inGroup('profesor')): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= site_url('profesores') ?>">
+                                <i class="bi bi-person-badge me-1"></i>Profesores
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('alumnos') ?>">
+                            <i class="bi bi-mortarboard me-1"></i>Alumnos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('carreras') ?>">
+                            <i class="bi bi-journal-text me-1"></i>Carreras
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('cursos') ?>">
+                            <i class="bi bi-book me-1"></i>Cursos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('inscripciones') ?>">
+                            <i class="bi bi-clipboard-check me-1"></i>Inscripciones
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a href="<?= site_url('logout') ?>" class="btn btn-outline-light">
                             <i class="bi bi-box-arrow-right me-1"></i>Logout

@@ -2,16 +2,22 @@
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Gestion de usuarios</h1>
-    <span class="badge bg-secondary">Shield</span>
+    <h1 class="h2 mb-0 fw-bold">
+        <i class="bi bi-people-fill text-primary me-2"></i>Gestión de Usuarios
+    </h1>
+    <span class="badge bg-primary">Shield</span>
 </div>
 
 <?php if ($message = session('ok')): ?>
-    <div class="alert alert-success"><?= esc($message) ?></div>
+    <div class="alert alert-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <?= esc($message) ?>
+    </div>
 <?php endif; ?>
 
 <?php if ($errors = session('errors')): ?>
-    <div class="alert alert-danger">
+    <div class="alert alert-danger d-flex align-items-start">
+        <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
         <ul class="mb-0">
             <?php foreach ((array) $errors as $error): ?>
                 <li><?= esc($error) ?></li>
@@ -28,35 +34,36 @@
 
 <div class="row g-4">
     <div class="col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-header">Nuevo usuario</div>
+        <div class="card shadow">
+            <div class="card-header">
+                <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+            </div>
             <div class="card-body">
                 <form action="<?= site_url('usuarios') ?>" method="post" class="vstack gap-3">
                     <?= csrf_field() ?>
 
-                    <div>
-                        <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" required>
+                    <div class="form-floating">
+                        <input type="text" name="username" id="username" class="form-control" value="<?= old('username') ?>" placeholder="Nombre de usuario" required>
+                        <label for="username">Nombre de usuario</label>
                     </div>
 
-                    <div>
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>">
+                    <div class="form-floating">
+                        <input type="email" name="email" id="email" class="form-control" value="<?= old('email') ?>" placeholder="Email">
+                        <label for="email">Email</label>
                     </div>
 
-                    <div>
-                        <label class="form-label">Contrasena</label>
-                        <input type="password" name="password" class="form-control" required>
+                    <div class="form-floating">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña" required>
+                        <label for="password">Contraseña</label>
                     </div>
 
-                    <div>
-                        <label class="form-label">Confirmar contrasena</label>
-                        <input type="password" name="password_confirm" class="form-control" required>
+                    <div class="form-floating">
+                        <input type="password" name="password_confirm" id="password_confirm" class="form-control" placeholder="Confirmar contraseña" required>
+                        <label for="password_confirm">Confirmar contraseña</label>
                     </div>
 
-                    <div>
-                        <label class="form-label">Grupo</label>
-                        <select name="group" class="form-select">
+                    <div class="form-floating">
+                        <select name="group" id="group" class="form-select">
                             <option value="">Sin asignar</option>
                             <?php foreach ($gruposDisponibles as $grupo): ?>
                                 <?php $groupName = $grupo->normalized ?? strtolower($grupo->name); ?>
@@ -65,6 +72,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <label for="group">Grupo</label>
                     </div>
 
                     <div class="form-check">
@@ -75,7 +83,9 @@
                     <hr>
 
                     <div>
-                        <label class="form-label">Vincular con registro</label>
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-link-45deg me-1"></i>Vincular con registro
+                        </label>
                         <select name="persona_tipo" id="persona_tipo_new" class="form-select mb-2">
                             <option value="">No vincular</option>
                             <option value="profesor" <?= $oldTipo === 'profesor' ? 'selected' : '' ?>>Profesor</option>
@@ -113,18 +123,22 @@
                         </select>
                     </div>
 
-                    <button class="btn btn-primary w-100">Crear usuario</button>
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle me-2"></i>Crear Usuario
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
     <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header">Listado</div>
+        <div class="card shadow">
+            <div class="card-header">
+                <i class="bi bi-list-ul me-2"></i>Listado de Usuarios
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table align-middle">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -150,32 +164,40 @@
                                 <td><?= esc($usuario->email) ?></td>
                                 <td>
                                     <?php if ($gruposLabel): ?>
-                                        <span class="badge bg-info text-dark"><?= esc(implode(', ', $gruposLabel)) ?></span>
+                                        <span class="badge bg-primary"><?= esc(implode(', ', $gruposLabel)) ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">Sin grupo</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($prof): ?>
-                                        <span class="badge bg-secondary">Profesor</span>
-                                        <div><?= esc($prof['nombre']) ?></div>
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-person-badge me-1"></i>Profesor
+                                        </span>
+                                        <div class="small"><?= esc($prof['nombre']) ?></div>
                                     <?php elseif ($alum): ?>
-                                        <span class="badge bg-secondary">Alumno</span>
-                                        <div><?= esc($alum['nombre']) ?></div>
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-mortarboard me-1"></i>Alumno
+                                        </span>
+                                        <div class="small"><?= esc($alum['nombre']) ?></div>
                                     <?php else: ?>
                                         <span class="text-muted">No vinculado</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($usuario->active): ?>
-                                        <span class="badge bg-success">Si</span>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Sí
+                                        </span>
                                     <?php else: ?>
-                                        <span class="badge bg-danger">No</span>
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>No
+                                        </span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end">
                                     <button
-                                        class="btn btn-sm btn-outline-primary"
+                                        class="btn btn-sm btn-primary"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditarUsuario"
                                         data-user='<?= json_encode([
@@ -199,7 +221,7 @@
                                             ),
                                         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
                                     >
-                                        Editar
+                                        <i class="bi bi-pencil-square me-1"></i>Editar
                                     </button>
                                     <form action="<?= site_url('usuarios/' . $usuario->id) ?>" method="post" class="d-inline" onsubmit="return confirm('Eliminar usuario?');">
                                         <?= csrf_field() ?>
