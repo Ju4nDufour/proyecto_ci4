@@ -4,12 +4,17 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
+// Página de inicio y dashboard
 $routes->get('/', 'Dashboard::index');
 $routes->get('dashboard', 'Dashboard::index');
+
+// ✅ RUTA PÚBLICA: visible sin login
+$routes->get('carreras', 'CarrerasPublic::index');
 
 // LOGOUT - Definido ANTES de los grupos con filtros
 $routes->get('logout', 'Auth\LogoutController::logoutAction');
 
+// Rutas protegidas por login (solo usuarios autenticados)
 $routes->group('', ['filter' => 'session'], static function (RouteCollection $routes) {
 
     // Solo Admin
@@ -33,7 +38,7 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->delete('(:num)', 'Alumnos::delete/$1');
     });
 
-    // Carreras
+    // Carreras (CRUD solo para usuarios logeados)
     $routes->group('carreras', static function (RouteCollection $routes) {
         $routes->get('/', 'CarrerasController::index');
         $routes->post('store', 'CarrerasController::store');
@@ -73,7 +78,7 @@ $routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static fun
     $routes->get('login', 'LoginController::loginView');
     $routes->post('login', 'LoginController::loginAction');
 
-    // Registro (deshabilitalo si no corresponde)
+    // Registro
     $routes->get('register', 'RegisterController::registerView');
     $routes->post('register', 'RegisterController::registerAction');
 

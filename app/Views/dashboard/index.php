@@ -6,7 +6,6 @@
     <img src="<?= base_url('images/banner.jpg') ?>" class="img-fluid rounded shadow" alt="Banner del sistema">
 </div>
 
-
 <div class="container mt-5">
     <div class="row">
         <!-- Sección principal -->
@@ -27,7 +26,8 @@
                     </a>
                 </div>
                 <div class="col">
-                    <a href="<?= site_url('carreras') ?>" class="btn btn-outline-primary w-100">
+                    <!-- Botón público para ver carreras -->
+                    <a href="<?= base_url('carreras') ?>" class="btn btn-outline-success w-100">
                         🎓 Ver Carreras
                     </a>
                 </div>
@@ -48,50 +48,50 @@
         <div class="col-md-5">
             <h4 class="text-success mb-3">📰 Noticias Destacadas</h4>
 
-           <!-- Tarjeta con funcionalidad de modal -->
-<div class="card mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalInscripcion" style="cursor: pointer;">
-    <div class="row g-0">
-        <div class="col-3 d-flex align-items-center justify-content-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/753/753318.png" alt="Inscripciones" width="50">
-        </div>
-        <div class="col-9">
-            <div class="card-body p-2">
-                <h5 class="card-title mb-1">✅ Inscripciones Abiertas</h5>
-                <p class="card-text small mb-0">Ya podés inscribirte a las materias del próximo cuatrimestre.</p>
+            <!-- Tarjeta con funcionalidad de modal -->
+            <div class="card mb-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalInscripcion" style="cursor: pointer;">
+                <div class="row g-0">
+                    <div class="col-3 d-flex align-items-center justify-content-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/753/753318.png" alt="Inscripciones" width="50">
+                    </div>
+                    <div class="col-9">
+                        <div class="card-body p-2">
+                            <h5 class="card-title mb-1">✅ Inscripciones Abiertas</h5>
+                            <p class="card-text small mb-0">Ya podés inscribirte a las materias del próximo cuatrimestre.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalInscripcion" tabindex="-1" aria-labelledby="modalInscripcionLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalInscripcionLabel">Inscripciones Abiertas</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <p>Ya podés inscribirte a las materias del próximo cuatrimestre.</p>
-        <ul>
-          <li>Inscripciones abiertas hasta el <strong>20 de noviembre</strong></li>
-          <li>Requisitos:
-            <ul>
-              <li>Titulo de secundario terminado</li>
-              <li>Presentar personalmente documentos personales</li>
-              <li>Formulario completado</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
+            <!-- Modal -->
+            <div class="modal fade" id="modalInscripcion" tabindex="-1" aria-labelledby="modalInscripcionLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalInscripcionLabel">Inscripciones Abiertas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Ya podés inscribirte a las materias del próximo cuatrimestre.</p>
+                            <ul>
+                                <li>Inscripciones abiertas hasta el <strong>20 de noviembre</strong></li>
+                                <li>Requisitos:
+                                    <ul>
+                                        <li>Título de secundario terminado</li>
+                                        <li>Presentar personalmente documentos personales</li>
+                                        <li>Formulario completado</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
+            <!-- Otras noticias -->
             <div class="card mb-3 shadow-sm">
                 <div class="row g-0">
                     <div class="col-3 d-flex align-items-center justify-content-center">
