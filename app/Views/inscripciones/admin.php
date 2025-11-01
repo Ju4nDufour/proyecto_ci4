@@ -18,12 +18,11 @@
       <div class="card-body">
         <table class="table table-sm table-striped align-middle">
           <thead>
-            <tr><th>#</th><th>Alumno</th><th>Curso</th><th>Carrera</th><th>Modalidad</th><th>Turno</th><th></th></tr>
+            <tr><th>Alumno</th><th>Curso</th><th>Carrera</th><th>Modalidad</th><th>Turno</th><th class="text-end"></th></tr>
           </thead>
           <tbody>
           <?php foreach($inscripciones_alumnos as $a): ?>
             <tr>
-              <td><?= $a['id_alumno_curso'] ?></td>
               <td><?= esc($a['alumno_nombre']) ?> <small class="text-muted">(<?= esc($a['alumno_dni']) ?>)</small></td>
               <td><?= esc($a['curso_nombre']) ?> <small class="text-muted">(<?= esc($a['curso_codigo']) ?>)</small></td>
               <td><?= esc($a['carrera_nombre']) ?></td>
@@ -34,7 +33,9 @@
                       onsubmit="return confirm('Eliminar inscripcion de alumno?')">
                   <?= csrf_field() ?>
                   <input type="hidden" name="tipo" value="alumno">
-                  <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </form>
               </td>
             </tr>
@@ -105,12 +106,11 @@
       <div class="card-body">
         <table class="table table-sm table-striped align-middle">
           <thead>
-            <tr><th>#</th><th>Profesor</th><th>Curso</th><th>Carrera</th><th>Fecha</th><th></th></tr>
+            <tr><th>Profesor</th><th>Curso</th><th>Carrera</th><th>Fecha</th><th class="text-end"></th></tr>
           </thead>
           <tbody>
           <?php foreach($inscripciones_profesores as $p): ?>
             <tr>
-              <td><?= $p['id_profesor_curso'] ?></td>
               <td><?= esc($p['profesor_nombre']) ?> <small class="text-muted">(<?= esc($p['profesor_dni']) ?>)</small></td>
               <td><?= esc($p['curso_nombre']) ?> <small class="text-muted">(<?= esc($p['curso_codigo']) ?>)</small></td>
               <td><?= esc($p['carrera_nombre']) ?></td>
@@ -120,7 +120,9 @@
                       onsubmit="return confirm('Eliminar asignacion de profesor?')">
                   <?= csrf_field() ?>
                   <input type="hidden" name="tipo" value="profesor">
-                  <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </form>
               </td>
             </tr>

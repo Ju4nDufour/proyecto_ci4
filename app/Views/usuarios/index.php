@@ -3,7 +3,6 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Gestion de usuarios</h1>
-    <span class="badge bg-secondary">Shield</span>
 </div>
 
 <?php if ($message = session('ok')): ?>
@@ -36,12 +35,12 @@
 
                     <div>
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" required>
+                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" readonly required>
                     </div>
 
                     <div>
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>">
+                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>" readonly>
                     </div>
 
                     <div>
@@ -67,8 +66,9 @@
                         </select>
                     </div>
 
+                    <input type="hidden" name="active" value="0">
                     <div class="form-check">
-                        <input type="checkbox" name="active" id="usuario-active" class="form-check-input" <?= old('active', 'on') ? 'checked' : '' ?>>
+                        <input type="checkbox" name="active" id="usuario-active" class="form-check-input" value="1" <?= old('active', 'on') ? 'checked' : '' ?>>
                         <label class="form-check-label" for="usuario-active">Activo</label>
                     </div>
 
@@ -127,10 +127,8 @@
                     <table class="table align-middle">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Usuario</th>
                                 <th>Email</th>
-                                <th>Grupos</th>
                                 <th>Vinculado a</th>
                                 <th>Activo</th>
                                 <th class="text-end">Acciones</th>
@@ -145,16 +143,8 @@
                                 $alum   = $alumnosPorUsuario[$usuario->id] ?? null;
                             ?>
                             <tr>
-                                <td><?= esc($usuario->id) ?></td>
                                 <td><?= esc($usuario->username) ?></td>
                                 <td><?= esc($usuario->email) ?></td>
-                                <td>
-                                    <?php if ($gruposLabel): ?>
-                                        <span class="badge bg-info text-dark"><?= esc(implode(', ', $gruposLabel)) ?></span>
-                                    <?php else: ?>
-                                        <span class="text-muted">Sin grupo</span>
-                                    <?php endif; ?>
-                                </td>
                                 <td>
                                     <?php if ($prof): ?>
                                         <span class="badge bg-secondary">Profesor</span>
@@ -198,13 +188,16 @@
                                                 ] : null
                                             ),
                                         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
+                                        title="Editar"
                                     >
-                                        Editar
+                                        <i class="bi bi-pencil"></i>
                                     </button>
                                     <form action="<?= site_url('usuarios/' . $usuario->id) ?>" method="post" class="d-inline" onsubmit="return confirm('Eliminar usuario?');">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="_method" value="DELETE">
-                                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -226,81 +219,32 @@
                 <h5 class="modal-title">Editar usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="modal-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" id="edit-username" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" id="edit-email" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nuevo password (opcional)</label>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Grupo</label>
-                        <select name="group" id="edit-group" class="form-select">
-                            <option value="">Sin asignar</option>
-                            <?php foreach ($gruposDisponibles as $grupo): ?>
-                                <option value="<?= esc($grupo->name) ?>"><?= esc($grupo->label) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check mt-4">
-                            <input type="checkbox" name="active" id="edit-active" class="form-check-input">
-                            <label for="edit-active" class="form-check-label">Activo</label>
-                        </div>
-                    </div>
-                </div>
-
-                <hr>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Vinculacion</label>
-                        <select name="persona_tipo" id="edit-persona-tipo" class="form-select">
-                            <option value="">Mantener</option>
-                            <option value="profesor">Profesor</option>
-                            <option value="alumno">Alumno</option>
-                            <option value="ninguno">Quitar vinculacion</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Registro</label>
-                        <select name="persona_id" id="edit-persona-id" class="form-select">
-                            <option value="">Seleccione registro</option>
-                            <?php foreach ($profesoresSinUsuario as $profesor): ?>
-                                <?php $profEmail = filter_var($profesor['email'] ?? '', FILTER_VALIDATE_EMAIL) ?: ''; ?>
-                                <option
-                                    value="<?= esc($profesor['id_profesor']) ?>"
-                                    data-tipo="profesor"
-                                    data-group="profesor"
-                                    data-nombre="<?= esc($profesor['nombre'], 'attr') ?>"
-                                    data-email="<?= esc($profEmail, 'attr') ?>"
-                                >
-                                    Profesor: <?= esc($profesor['nombre']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                            <?php foreach ($alumnosSinUsuario as $alumno): ?>
-                                <?php $alumnoEmail = filter_var($alumno['email'] ?? '', FILTER_VALIDATE_EMAIL) ?: ''; ?>
-                                <option
-                                    value="<?= esc($alumno['id_alumno']) ?>"
-                                    data-tipo="alumno"
-                                    data-group="alumno"
-                                    data-nombre="<?= esc($alumno['nombre'], 'attr') ?>"
-                                    data-email="<?= esc($alumnoEmail, 'attr') ?>"
-                                >
-                                    Alumno: <?= esc($alumno['nombre']) ?> (<?= esc($alumno['dni']) ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <small class="text-muted">Selecciona tipo y registro para reasignar. Usa "Quitar vinculacion" para desvincular.</small>
-                    </div>
-                </div>
+<div class="modal-body">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Nombre de usuario</label>
+            <input type="text" name="username" id="edit-username" class="form-control" required readonly>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" id="edit-email" class="form-control" readonly>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Nuevo password (opcional)</label>
+            <input type="password" name="password" id="edit-password" class="form-control" autocomplete="new-password">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Confirmar nuevo password</label>
+            <input type="password" name="password_confirm" id="edit-password-confirm" class="form-control" autocomplete="new-password">
+        </div>
+        <div class="col-12">
+            <div class="form-check mt-2">
+                <input type="checkbox" name="active" id="edit-active" class="form-check-input">
+                <label for="edit-active" class="form-check-label">Activo</label>
             </div>
+        </div>
+    </div>
+</div>
             <div class="modal-footer">
                 <button class="btn btn-primary">Guardar cambios</button>
             </div>
@@ -533,3 +477,5 @@
 <?= $this->endSection() ?>
 
 <?= $this->endSection() ?>
+
+
