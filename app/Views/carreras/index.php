@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/app') ?>
+﻿<?= $this->extend('layouts/app') ?>
 <?= $this->section('content') ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
@@ -17,7 +17,7 @@
 
 <form class="row g-2 mb-3" method="get" action="<?= current_url() ?>">
   <div class="col-sm-6 col-md-4">
-    <input name="q" value="<?= esc($_GET['q'] ?? '') ?>" class="form-control" placeholder="Buscar por nombre o código...">
+    <input name="q" value="<?= esc($_GET['q'] ?? '') ?>" class="form-control" placeholder="Buscar por nombre o codigo...">
   </div>
   <div class="col-auto"><button class="btn btn-outline-secondary">Buscar</button></div>
 </form>
@@ -27,34 +27,29 @@
     <table class="table table-striped align-middle">
       <thead>
         <tr>
-          <th style="width:90px">#</th>
-          <th>Carreras</th>
-      
-          <th class="text-end" style="width:280px">Acciones</th>
+          <th>Carrera</th>
+          <th class="text-end" style="width:200px">Acciones</th>
         </tr>
       </thead>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       <tbody>
       <?php foreach($carreras as $c): ?>
         <tr>
-          <td><?= $c['id_carrera'] ?></td>
           <td><?= esc($c['nombre']) ?></td>
           <td class="text-end">
-            <!-- EDITAR en modal -->
             <button
               type="button"
               class="btn btn-sm btn-outline-secondary btn-edit"
               data-id="<?= $c['id_carrera'] ?>"
               data-nombre="<?= esc($c['nombre']) ?>"
+              title="Editar"
             >
-              Editar
+              <i class="bi bi-pencil"></i>
             </button>
-
-            <!-- ELIMINAR (POST + CSRF + confirm) -->
-            <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
-      onsubmit="return confirm('¿Eliminar carrera?');">
+            <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar carrera?');">
               <?= csrf_field() ?>
-              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+              <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                <i class="bi bi-trash"></i>
+              </button>
             </form>
           </td>
         </tr>
@@ -78,7 +73,6 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" class="form-control" required>
         </div>
-    
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary">Guardar</button>
@@ -101,7 +95,6 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" id="editNombre" class="form-control" required>
         </div>
-        
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary">Guardar cambios</button>
@@ -110,35 +103,24 @@
   </div>
 </div>
 
-<!-- JS para abrir modal de edición y setear acción/valores -->
 <script>
   (function () {
     const modalEl = document.getElementById('modalEditarCarrera');
     const modal   = new bootstrap.Modal(modalEl);
     const form    = document.getElementById('formEditarCarrera');
     const inputNombre = document.getElementById('editNombre');
-    
-
-    // ⚠️ NUEVO: base correcta usando site_url
     const updateBase = "<?= site_url('carreras/update') ?>";
 
     document.querySelectorAll('.btn-edit').forEach(btn => {
       btn.addEventListener('click', () => {
         const id     = btn.dataset.id;
         const nombre = btn.dataset.nombre;
-        
-
         inputNombre.value = nombre;
-        
-
-        // 👇 Queda /proyecto_ci4/public/carreras/update/{id}
         form.action = `${updateBase}/${id}`;
-
         modal.show();
       });
     });
   })();
 </script>
-
 
 <?= $this->endSection() ?>

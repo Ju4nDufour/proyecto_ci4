@@ -14,12 +14,11 @@
   <div class="card-body">
     <table class="table table-striped">
       <thead>
-        <tr><th>#</th><th>Nombre y Apellido</th><th>Email</th><th>Contacto</th><th>DNI</th><th class="text-end">Acciones</th></tr>
+        <tr><th>Nombre y Apellido</th><th>Email</th><th>Contacto</th><th>DNI</th><th class="text-end">Acciones</th></tr>
       </thead>
       <tbody>
       <?php foreach($profesores as $p): ?>
         <tr>
-          <td><?= $p['id_profesor'] ?></td>
           <td><?= esc($p['nombre']) ?></td>
           <td><?= esc($p['email']) ?></td>
           <td><?= esc($p['contacto']) ?></td>
@@ -33,13 +32,16 @@
               data-email="<?= esc($p['email']) ?>"
               data-contacto="<?= esc($p['contacto']) ?>"
               data-dni="<?= esc($p['dni']) ?>"
+              title="Editar"
             >
-              Editar
+              <i class="bi bi-pencil"></i>
             </button>
             <form action="<?= site_url('profesores/delete/'.$p['id_profesor']) ?>" method="post" class="d-inline"
               onsubmit="return confirm('¿Eliminar profesor?');">
               <?= csrf_field() ?>
-              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+              <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                <i class="bi bi-trash"></i>
+              </button>
             </form>
           </td>
         </tr>

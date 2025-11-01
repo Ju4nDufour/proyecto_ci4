@@ -27,13 +27,12 @@
       <table class="table table-hover align-middle">
         <thead class="table-light">
           <tr>
-            <th>#</th><th>DNI</th><th>Nombre y Apellido</th><th>Email</th><th>Fecha Nac.</th><th>Carrera</th><th style="width:160px">Acciones</th>
+            <th>DNI</th><th>Nombre y Apellido</th><th>Email</th><th>Fecha Nac.</th><th>Carrera</th><th style="width:160px">Acciones</th>
           </tr>
         </thead>
         <tbody>
         <?php if (!empty($alumnos)): foreach($alumnos as $a): ?>
           <tr>
-            <td><?= esc($a['id_alumno']) ?></td>
             <td><?= esc($a['dni']) ?></td>
             <td><?= esc($a['nombre']) ?></td>
             <td><?= esc($a['email']) ?></td>
@@ -50,18 +49,21 @@
                   data-email="<?= esc($a['email']) ?>"
                   data-fecha="<?= esc($a['fecha_nac']) ?>"
                   data-carrera="<?= esc($a['id_carrera']) ?>"
-                >Editar</button>
+                  title="Editar"
+                ><i class="bi bi-pencil"></i></button>
 
                 <form method="post" action="<?= site_url('alumnos/'.$a['id_alumno']) ?>" onsubmit="return confirm('¿Eliminar alumno <?= esc($a['nombre']) ?>?');">
                   <?= csrf_field() ?>
                   <input type="hidden" name="_method" value="DELETE">
-                  <button class="btn btn-outline-danger">Eliminar</button>
+                  <button class="btn btn-outline-danger" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </form>
               </div>
             </td>
           </tr>
         <?php endforeach; else: ?>
-          <tr><td colspan="7" class="text-center text-muted">Sin resultados</td></tr>
+          <tr><td colspan="6" class="text-center text-muted">Sin resultados</td></tr>
         <?php endif; ?>
         </tbody>
       </table>
