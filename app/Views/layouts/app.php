@@ -51,7 +51,7 @@ $user     = $isLogged ? $auth->user() : null;
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
-                    
+
                     <!-- LOGOUT - Corregido: solo un botón GET -->
                     <li class="nav-item">
                         <a href="<?= site_url('logout') ?>" class="btn btn-outline-light">
@@ -74,6 +74,7 @@ $user     = $isLogged ? $auth->user() : null;
     </div>
 </footer>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <?= $this->renderSection('scripts') ?>
 </body>

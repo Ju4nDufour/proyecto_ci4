@@ -13,7 +13,7 @@ class UsuarioModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'username', 'email', 'password', 'active', 'first_name', 'last_name'
+        'username', 'email', 'password', 'active'
     ];
 
     // Dates
@@ -26,9 +26,7 @@ class UsuarioModel extends Model
     protected $validationRules      = [
         'username'  => 'required|min_length[3]|max_length[30]|is_unique[users.username]',
         'email'     => 'required|valid_email|is_unique[users.email]',
-        'password'  => 'required|min_length[8]',
-        'first_name'=> 'permit_empty|max_length[100]',
-        'last_name' => 'permit_empty|max_length[100]'
+        'password'  => 'required|min_length[8]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -36,8 +34,8 @@ class UsuarioModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = ['hashPassword'];
-    protected $beforeUpdate   = ['hashPassword'];
+    protected $beforeInsert   = [];
+    protected $beforeUpdate   = [];
 
     protected function hashPassword(array $data)
     {

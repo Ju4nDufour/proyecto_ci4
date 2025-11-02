@@ -36,7 +36,7 @@ class Usuarios extends ResourceController
     public function show($id = null)
     {
         $user = $this->model->getUserWithGroup($id);
-        
+
         if (!$user) {
             return $this->failNotFound('Usuario no encontrado');
         }
@@ -58,50 +58,61 @@ class Usuarios extends ResourceController
      */
     public function store()
     {
+        // Procesar datos JSON o POST
+        $jsonData = $this->request->getJSON(true);
+        $postData = $this->request->getPost();
+
+        // Priorizar JSON, luego POST
+        $data = $jsonData ?? $postData;
+
+        // Registrar datos recibidos para debugging
+        log_message('debug', 'Datos recibidos en store: ' . json_encode($data));
+
+        if (empty($data)) {
+            return $this->failValidationErrors(['No se recibieron datos']);
+        }
+
         $rules = [
-            'username'  => 'required|min_length[3]|max_length[30]|is_unique[users.username]',
-            'email'     => 'required|valid_email|is_unique[users.email]',
-            'password'  => 'required|min_length[8]',
-            'first_name'=> 'permit_empty|max_length[100]',
-            'last_name' => 'permit_empty|max_length[100]',
-            'group'     => 'required|in_list[admin,profesor,alumno]'
+            'username' => 'required|min_length[3]|max_length[30]|is_unique[users.username]',
+            'email'    => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[8]',
+            'group'    => 'required|in_list[admin,profesor,alumno]'
         ];
 
         if (!$this->validate($rules)) {
             return $this->failValidationErrors($this->validator->getErrors());
         }
 
-        $data = $this->request->getPost();
-        
         try {
-            // Crear usuario
-            $userModel = new \App\Models\UsuarioModel();
+            // Usar UserProvider de Shield
+            $userProvider = service('auth')->getProvider();
+
             $userData = [
-                'username'  => $data['username'],
-                'email'     => $data['email'],
-                'password'  => $data['password'],
-                'first_name'=> $data['first_name'] ?? '',
-                'last_name' => $data['last_name'] ?? '',
-                'active'    => 1
+                'username' => $data['username'],
+                'email'    => $data['email'],
+                'password' => $data['password'],
+                'active'   => 1
             ];
 
-            if (!$userModel->save($userData)) {
-                return $this->fail($userModel->errors());
-            }
+            // Crear usuario con Shield
+            $user = $userProvider->createUser($userData);
 
-            $userId = $userModel->getInsertID();
+            if (!$user) {
+                return $this->failServerError('Error al crear el usuario en Shield');
+            }
 
             // Asignar grupo/rol
             $authGroupsUsers = new \App\Models\AuthGroupsUsersModel();
             $authGroupsUsers->insert([
-                'user_id'   => $userId,
-                'group'     => $data['group'],
+                'user_id'    => $user->id,
+                'group'      => $data['group'],
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
             return $this->respondCreated(['message' => 'Usuario creado exitosamente']);
 
         } catch (\Exception $e) {
+            log_message('error', 'Error al crear usuario: ' . $e->getMessage());
             return $this->failServerError('Error al crear el usuario: ' . $e->getMessage());
         }
     }
@@ -111,56 +122,65 @@ class Usuarios extends ResourceController
      */
     public function update($id = null)
     {
+        $json = $this->request->getJSON(true);
+        $post = $this->request->getPost();
+        $data = !empty($json) ? $json : $post;
+
         $rules = [
             'username'  => "required|min_length[3]|max_length[30]|is_unique[users.username,id,{$id}]",
             'email'     => "required|valid_email|is_unique[users.email,id,{$id}]",
-            'first_name'=> 'permit_empty|max_length[100]',
-            'last_name' => 'permit_empty|max_length[100]',
             'group'     => 'required|in_list[admin,profesor,alumno]'
         ];
 
-        // Solo validar password si se proporciona
-        if ($this->request->getPost('password')) {
+        if (!empty($data['password'])) {
             $rules['password'] = 'min_length[8]';
         }
 
         if (!$this->validate($rules)) {
-            return $this->failValidationErrors($this->validator->getErrors());
+            return $this->response->setJSON([
+                'error' => true,
+                'messages' => $this->validator->getErrors()
+            ])->setStatusCode(400);
         }
 
-        $data = $this->request->getPost();
-        
         try {
-            // Actualizar datos del usuario
-            $userData = [
-                'username'  => $data['username'],
-                'email'     => $data['email'],
-                'first_name'=> $data['first_name'] ?? '',
-                'last_name' => $data['last_name'] ?? '',
-            ];
+            $users = auth()->getProvider();
+            $user = $users->findById($id);
 
-            // Solo actualizar password si se proporciona
+            if (!$user) {
+                return $this->response->setJSON([
+                    'error' => true,
+                    'message' => 'Usuario no encontrado'
+                ])->setStatusCode(404);
+            }
+
+            $user->username = $data['username'];
+            $user->email = $data['email'];
+
             if (!empty($data['password'])) {
-                $userData['password'] = $data['password'];
+                $user->password = $data['password'];
             }
 
-            if (!$this->model->update($id, $userData)) {
-                return $this->fail($this->model->errors());
-            }
+            $users->save($user);
 
-            // Actualizar grupo/rol
             $authGroupsUsers = new \App\Models\AuthGroupsUsersModel();
-            $authGroupsUsers->where('user_id', $id)->delete(); // Eliminar grupo actual
+            $authGroupsUsers->where('user_id', $id)->delete();
             $authGroupsUsers->insert([
                 'user_id'   => $id,
                 'group'     => $data['group'],
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
-            return $this->respond(['message' => 'Usuario actualizado exitosamente']);
+            return $this->response->setJSON([
+                'error' => false,
+                'message' => 'Usuario actualizado exitosamente'
+            ])->setStatusCode(200);
 
         } catch (\Exception $e) {
-            return $this->failServerError('Error al actualizar el usuario: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'error' => true,
+                'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
+            ])->setStatusCode(500);
         }
     }
 
@@ -170,19 +190,26 @@ class Usuarios extends ResourceController
     public function delete($id = null)
     {
         try {
-            // Primero eliminar de auth_groups_users
             $authGroupsUsers = new \App\Models\AuthGroupsUsersModel();
             $authGroupsUsers->where('user_id', $id)->delete();
 
-            // Luego eliminar el usuario
             if (!$this->model->delete($id)) {
-                return $this->fail('Error al eliminar el usuario');
+                return $this->response->setJSON([
+                    'error' => true,
+                    'message' => 'Error al eliminar el usuario'
+                ])->setStatusCode(400);
             }
 
-            return $this->respondDeleted(['message' => 'Usuario eliminado exitosamente']);
+            return $this->response->setJSON([
+                'error' => false,
+                'message' => 'Usuario eliminado exitosamente'
+            ])->setStatusCode(200);
 
         } catch (\Exception $e) {
-            return $this->failServerError('Error al eliminar el usuario: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'error' => true,
+                'message' => 'Error al eliminar el usuario: ' . $e->getMessage()
+            ])->setStatusCode(500);
         }
     }
 }
