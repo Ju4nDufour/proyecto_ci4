@@ -35,12 +35,12 @@
 
                     <div>
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" required>
+                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" readonly>
                     </div>
 
                     <div>
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>">
+                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>" readonly>
                     </div>
 
                     <div>
@@ -220,11 +220,11 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" id="edit-username" class="form-control" required>
+                        <input type="text" name="username" id="edit-username" class="form-control" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" id="edit-email" class="form-control">
+                        <input type="email" name="email" id="edit-email" class="form-control" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nuevo password (opcional)</label>
