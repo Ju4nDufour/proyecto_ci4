@@ -42,17 +42,27 @@ $user     = $isLogged ? $auth->user() : null;
                     </li>
                 <?php else: ?>
                     <?php if ($user->inGroup('admin')): ?>
+                        <!-- ADMIN ve TODO -->
                         <li class="nav-item">
                             <a class="nav-link" href="<?= site_url('usuarios') ?>">Usuarios</a>
                         </li>
-                    <?php endif; ?>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('profesores') ?>">Profesor</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('alumnos') ?>">Alumno</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('profesores') ?>">Profesor</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('alumnos') ?>">Alumno</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
                     
-                    <!-- LOGOUT - Corregido: solo un botón GET -->
+                    <?php elseif ($user->inGroup('profesor')): ?>
+                        <!-- PROFESOR solo ve Inscripciones -->
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
+                    
+                    <?php elseif ($user->inGroup('alumno')): ?>
+                        <!-- ALUMNO solo ve Inscripciones -->
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
+                    
+                    <?php endif; ?>
+                    
+                    <!-- LOGOUT - visible para todos los usuarios logueados -->
                     <li class="nav-item">
                         <a href="<?= site_url('logout') ?>" class="btn btn-outline-light">
                             <i class="bi bi-box-arrow-right me-1"></i>Logout
