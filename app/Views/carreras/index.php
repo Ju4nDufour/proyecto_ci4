@@ -27,9 +27,7 @@
     <table class="table table-striped align-middle">
       <thead>
         <tr>
-          <th style="width:90px">#</th>
-          <th>Carreras</th>
-      
+          <th>Carrera</th>
           <th class="text-end" style="width:280px">Acciones</th>
         </tr>
       </thead>
@@ -37,24 +35,25 @@
       <tbody>
       <?php foreach($carreras as $c): ?>
         <tr>
-          <td><?= $c['id_carrera'] ?></td>
           <td><?= esc($c['nombre']) ?></td>
           <td class="text-end">
             <!-- EDITAR en modal -->
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary btn-edit"
+              class="btn btn-sm btn-outline-secondary btn-edit me-1" aria-label="Editar carrera" title="Editar"
               data-id="<?= $c['id_carrera'] ?>"
               data-nombre="<?= esc($c['nombre']) ?>"
             >
-              Editar
+              <i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span>
             </button>
 
             <!-- ELIMINAR (POST + CSRF + confirm) -->
             <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
       onsubmit="return confirm('¿Eliminar carrera?');">
               <?= csrf_field() ?>
-              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+              <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar carrera" title="Eliminar">
+                <i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span>
+              </button>
             </form>
           </td>
         </tr>

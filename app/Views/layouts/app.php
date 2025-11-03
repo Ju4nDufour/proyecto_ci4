@@ -70,7 +70,7 @@ $user     = $isLogged ? $auth->user() : null;
 
 <footer class="py-3 mt-4 border-top bg-white">
     <div class="container text-center text-muted small">
-        Instituto 57 · CI4 · <?= date('Y') ?>
+        &copy; <?= date('Y') ?> Instituto 57. Todos los derechos reservados.
     </div>
 </footer>
 
