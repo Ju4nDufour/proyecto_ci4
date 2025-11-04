@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Gestion de usuarios</h1>
+    <h1 class="h3 mb-0">Gestión de usuarios</h1>
 </div>
 
 <?php if ($message = session('ok')): ?>
@@ -34,29 +34,31 @@
                     <?= csrf_field() ?>
 
                     <div>
-                        <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" readonly>
+                        <label class="form-label">Nombre de usuario *</label>
+                        <input type="text" name="username" id="username-new" class="form-control" value="<?= old('username') ?>" required>
+                        <small class="text-muted">Se completa automáticamente al vincular</small>
                     </div>
 
                     <div>
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>" readonly>
+                        <label class="form-label">Email *</label>
+                        <input type="email" name="email" id="email-new" class="form-control" value="<?= old('email') ?>" required>
+                        <small class="text-muted">Se completa automáticamente al vincular</small>
                     </div>
 
                     <div>
-                        <label class="form-label">Contrasena</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <label class="form-label">Contraseña *</label>
+                        <input type="password" name="password" class="form-control" required minlength="8">
                     </div>
 
                     <div>
-                        <label class="form-label">Confirmar contrasena</label>
+                        <label class="form-label">Confirmar contraseña *</label>
                         <input type="password" name="password_confirm" class="form-control" required>
                     </div>
 
                     <div>
                         <label class="form-label">Grupo</label>
-                        <select name="group" class="form-select">
-                            <option value="">Sin asignar</option>
+                        <select name="group" id="group-new" class="form-select">
+                            <option value="">Alumno (por defecto)</option>
                             <?php foreach ($gruposDisponibles as $grupo): ?>
                                 <?php $groupName = $grupo->normalized ?? strtolower($grupo->name); ?>
                                 <option value="<?= esc($grupo->name) ?>" <?= $oldGroup === $groupName ? 'selected' : '' ?>>
@@ -67,7 +69,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input type="checkbox" name="active" id="usuario-active" class="form-check-input" <?= old('active', 'on') ? 'checked' : '' ?>>
+                        <input type="checkbox" name="active" id="usuario-active" class="form-check-input" <?= old('active', 'on') ? 'checked' : '' ?> value="1">
                         <label class="form-check-label" for="usuario-active">Activo</label>
                     </div>
 
@@ -128,6 +130,7 @@
                             <tr>
                                 <th>Usuario</th>
                                 <th>Email</th>
+                                <th>Grupo</th>
                                 <th>Vinculado a</th>
                                 <th>Activo</th>
                                 <th class="text-end">Acciones</th>
@@ -137,12 +140,22 @@
                         <?php foreach ($usuarios as $usuario): ?>
                             <?php
                                 $grupos = $authorization ? $authorization->getUserGroups($usuario->id) : [];
+                                $grupoNombre = !empty($grupos) ? $grupos[0] : 'Sin grupo';
                                 $prof   = $profesoresPorUsuario[$usuario->id] ?? null;
                                 $alum   = $alumnosPorUsuario[$usuario->id] ?? null;
                             ?>
                             <tr>
                                 <td><?= esc($usuario->username) ?></td>
-                                <td><?= esc($usuario->email) ?></td>
+                                <td>
+                                    <?php if ($usuario->email): ?>
+                                        <?= esc($usuario->email) ?>
+                                    <?php else: ?>
+                                        <span class="text-danger">Sin email</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info"><?= esc($grupoNombre) ?></span>
+                                </td>
                                 <td>
                                     <?php if ($prof): ?>
                                         <span class="badge bg-secondary">Profesor</span>
@@ -163,7 +176,7 @@
                                 </td>
                                 <td class="text-end">
                                     <button
-                                        class="btn btn-sm btn-outline-primary me-1" aria-label="Editar usuario" title="Editar"
+                                        class="btn btn-sm btn-outline-primary me-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditarUsuario"
                                         data-user='<?= json_encode([
@@ -171,7 +184,7 @@
                                             'username'    => $usuario->username,
                                             'email'       => $usuario->email,
                                             'active'      => (int) $usuario->active,
-                                            'group'       => $grupos ? $grupos[0] : '',
+                                            'group'       => $grupoNombre,
                                             'persona'     => $prof ? [
                                                 'tipo'   => 'profesor',
                                                 'id'     => $prof['id_profesor'],
@@ -187,13 +200,13 @@
                                             ),
                                         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
                                     >
-                                        <i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span>
+                                        <i class="bi bi-pencil"></i>
                                     </button>
-                                    <form action="<?= site_url('usuarios/' . $usuario->id) ?>" method="post" class="d-inline" onsubmit="return confirm('Eliminar usuario?');">
+                                    <form action="<?= site_url('usuarios/' . $usuario->id) ?>" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar usuario?');">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="_method" value="DELETE">
-                                        <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar usuario" title="Eliminar">
-                                            <i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </td>
@@ -207,24 +220,24 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <form class="modal-content" method="post" id="formEditarUsuario">
             <?= csrf_field() ?>
             <input type="hidden" name="_method" value="PUT">
             <div class="modal-header">
                 <h5 class="modal-title">Editar usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" id="edit-username" class="form-control" readonly>
+                        <label class="form-label">Nombre de usuario *</label>
+                        <input type="text" name="username" id="edit-username" class="form-control" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" id="edit-email" class="form-control" readonly>
+                        <label class="form-label">Email *</label>
+                        <input type="email" name="email" id="edit-email" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nuevo password (opcional)</label>
@@ -233,7 +246,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Grupo</label>
                         <select name="group" id="edit-group" class="form-select">
-                            <option value="">Sin asignar</option>
+                            <option value="">Alumno (por defecto)</option>
                             <?php foreach ($gruposDisponibles as $grupo): ?>
                                 <option value="<?= esc($grupo->name) ?>"><?= esc($grupo->label) ?></option>
                             <?php endforeach; ?>
@@ -241,7 +254,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-check mt-4">
-                            <input type="checkbox" name="active" id="edit-active" class="form-check-input">
+                            <input type="checkbox" name="active" id="edit-active" class="form-check-input" value="1">
                             <label for="edit-active" class="form-check-label">Activo</label>
                         </div>
                     </div>
@@ -250,12 +263,12 @@
                 <hr>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Vinculacion</label>
+                        <label class="form-label">Vinculación</label>
                         <select name="persona_tipo" id="edit-persona-tipo" class="form-select">
                             <option value="">Mantener</option>
                             <option value="profesor">Profesor</option>
                             <option value="alumno">Alumno</option>
-                            <option value="ninguno">Quitar vinculacion</option>
+                            <option value="ninguno">Quitar vinculación</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -287,7 +300,6 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <small class="text-muted">Selecciona tipo y registro para reasignar. Usa "Quitar vinculacion" para desvincular.</small>
                     </div>
                 </div>
             </div>
@@ -300,225 +312,152 @@
 
 <?= $this->section('scripts') ?>
 <script>
-    (function () {
-        const slugify = (value) => {
-            if (!value) return '';
-            return value
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '.')
-                .replace(/^\.+|\.+$/g, '') || value.toLowerCase().replace(/\s+/g, '.');
-        };
+(function () {
+    const slugify = (value) => {
+        if (!value) return '';
+        return value
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '.')
+            .replace(/^\.+|\.+$/g, '') || value.toLowerCase().replace(/\s+/g, '.');
+    };
 
-        const filterOptions = (select, tipo) => {
-            if (!select) return;
-            Array.from(select.options).forEach(option => {
-                if (!option.dataset.tipo) {
-                    option.hidden = false;
-                    return;
-                }
-                const visible = !tipo || option.dataset.tipo === tipo;
-                option.hidden = !visible;
-                if (!visible && option.selected) {
-                    option.selected = false;
-                }
-            });
-        };
-
-        const assignSelectValue = (select, value) => {
-            if (!select) return '';
-            if (!value) {
-                select.value = '';
-                return '';
+    const filterOptions = (select, tipo) => {
+        if (!select) return;
+        Array.from(select.options).forEach(option => {
+            if (!option.dataset.tipo) {
+                option.hidden = false;
+                return;
             }
-            const option = Array.from(select.options).find(opt => opt.value.toLowerCase() === value.toLowerCase());
-            if (option) {
-                select.value = option.value;
-                return option.value;
-            }
-            select.value = value;
-            return value;
-        };
+            const visible = !tipo || option.dataset.tipo === tipo;
+            option.hidden = !visible;
+            if (!visible && option.selected) option.selected = false;
+        });
+    };
 
-        const lockGroup = (select, value) => {
-            if (!select) return;
-            const assigned = assignSelectValue(select, value);
-            const locked = Boolean(value);
-            select.dataset.locked = locked ? '1' : '';
-            select.dataset.lockedValue = locked ? assigned : '';
-            select.classList.toggle('bg-light', locked);
-            select.classList.toggle('text-muted', locked);
-        };
+    const buildPersonaBinder = (config) => {
+        const { tipoSelect, idSelect, groupSelect, usernameInput, emailInput } = config;
+        if (!tipoSelect || !idSelect) return { update: () => {} };
 
-        const setupGroupLock = (select) => {
-            if (!select) return;
-            select.addEventListener('change', () => {
-                if (select.dataset.locked === '1') {
-                    select.value = select.dataset.lockedValue || select.value;
-                }
-            });
-        };
+        const updateFromSelection = () => {
+            const tipo = tipoSelect.value === 'ninguno' ? '' : tipoSelect.value;
+            const option = idSelect.selectedOptions[0];
 
-        const buildPersonaBinder = (config) => {
-            const { tipoSelect, idSelect, groupSelect, usernameInput, emailInput, applyInitial = true } = config;
-            if (!tipoSelect || !idSelect) {
-                return { update: () => {} };
+            if (!tipo || !option || option.dataset.tipo !== tipo) {
+                if (groupSelect) groupSelect.disabled = false;
+                return;
             }
 
-            const updateFromSelection = () => {
-                const tipo = tipoSelect.value === 'ninguno' ? '' : tipoSelect.value;
-                const option = idSelect.selectedOptions[0];
+            if (groupSelect && option.dataset.group) {
+                groupSelect.value = option.dataset.group;
+                groupSelect.disabled = true;
+            }
 
-                if (!tipo || !option || option.dataset.tipo !== tipo) {
-                    lockGroup(groupSelect, '');
-                    return;
-                }
+            if (usernameInput && option.dataset.nombre) {
+                usernameInput.value = slugify(option.dataset.nombre);
+            }
+            if (emailInput && option.dataset.email) {
+                emailInput.value = option.dataset.email;
+            }
+        };
 
-                const groupValue = option.dataset.group || tipo;
-                lockGroup(groupSelect, groupValue);
+        tipoSelect.addEventListener('change', () => {
+            const tipo = tipoSelect.value === 'ninguno' ? '' : tipoSelect.value;
+            filterOptions(idSelect, tipo);
+            if (!tipo) {
+                if (groupSelect) groupSelect.disabled = false;
+                idSelect.value = '';
+            }
+            updateFromSelection();
+        });
 
-                if (usernameInput && option.dataset.nombre) {
-                    usernameInput.value = slugify(option.dataset.nombre);
-                }
-                if (emailInput) {
-                    const email = option.dataset.email || '';
-                    if (email) {
-                        emailInput.value = email;
-                    }
-                }
-            };
+        idSelect.addEventListener('change', updateFromSelection);
+        filterOptions(idSelect, tipoSelect.value === 'ninguno' ? '' : tipoSelect.value);
+        updateFromSelection();
 
-            tipoSelect.addEventListener('change', () => {
-                const tipo = tipoSelect.value === 'ninguno' ? '' : tipoSelect.value;
-                filterOptions(idSelect, tipo);
-                if (!tipo) {
-                    lockGroup(groupSelect, '');
-                    return;
-                }
-                const option = idSelect.selectedOptions[0];
-                if (!option || option.dataset.tipo !== tipo) {
-                    idSelect.value = '';
-                }
-                updateFromSelection();
+        return { update: updateFromSelection };
+    };
+
+    // Formulario de creación
+    const newBinder = buildPersonaBinder({
+        tipoSelect: document.getElementById('persona_tipo_new'),
+        idSelect: document.getElementById('persona_id_new'),
+        groupSelect: document.getElementById('group-new'),
+        usernameInput: document.getElementById('username-new'),
+        emailInput: document.getElementById('email-new'),
+    });
+
+    // Modal de edición
+    const modal = document.getElementById('modalEditarUsuario');
+    const editBinder = buildPersonaBinder({
+        tipoSelect: document.getElementById('edit-persona-tipo'),
+        idSelect: document.getElementById('edit-persona-id'),
+        groupSelect: document.getElementById('edit-group'),
+        usernameInput: document.getElementById('edit-username'),
+        emailInput: document.getElementById('edit-email'),
+    });
+
+    if (modal) {
+        modal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            if (!button?.dataset?.user) return;
+
+            let data;
+            try {
+                data = JSON.parse(button.dataset.user);
+            } catch (error) {
+                return;
+            }
+
+            const form = document.getElementById('formEditarUsuario');
+            form.action = "<?= site_url('usuarios') ?>/" + data.id;
+
+            document.getElementById('edit-username').value = data.username || '';
+            document.getElementById('edit-email').value = data.email || '';
+            document.getElementById('edit-active').checked = data.active === 1;
+            document.getElementById('edit-group').value = data.group || '';
+
+            const tipoSelect = document.getElementById('edit-persona-tipo');
+            const idSelect = document.getElementById('edit-persona-id');
+
+            tipoSelect.value = '';
+            idSelect.value = '';
+
+            Array.from(idSelect.options).forEach(option => {
+                option.hidden = false;
+                if (option.dataset.temp === 'actual') option.remove();
             });
 
-            idSelect.addEventListener('change', updateFromSelection);
+            if (data.persona) {
+                tipoSelect.value = data.persona.tipo;
+                let option = Array.from(idSelect.options).find(opt =>
+                    Number(opt.value) === Number(data.persona.id) &&
+                    opt.dataset.tipo === data.persona.tipo
+                );
+
+                if (!option) {
+                    option = new Option(
+                        (data.persona.tipo === 'profesor' ? 'Profesor: ' : 'Alumno: ') + data.persona.nombre,
+                        data.persona.id,
+                        true,
+                        true
+                    );
+                    option.dataset.tipo = data.persona.tipo;
+                    option.dataset.temp = 'actual';
+                    option.dataset.group = data.persona.tipo;
+                    option.dataset.nombre = data.persona.nombre;
+                    option.dataset.email = data.persona.email;
+                    idSelect.insertBefore(option, idSelect.options[1]);
+                } else {
+                    option.selected = true;
+                }
+            }
 
             filterOptions(idSelect, tipoSelect.value === 'ninguno' ? '' : tipoSelect.value);
-            if (applyInitial) {
-                updateFromSelection();
-            }
-
-            return { update: updateFromSelection };
-        };
-
-        // Formulario de creacion
-        const usernameNew = document.querySelector('input[name="username"]');
-        const emailNew    = document.querySelector('input[name="email"]');
-        const groupNew    = document.querySelector('select[name="group"]');
-        const tipoNew     = document.getElementById('persona_tipo_new');
-        const idNew       = document.getElementById('persona_id_new');
-
-        setupGroupLock(groupNew);
-        const newBinder = buildPersonaBinder({
-            tipoSelect: tipoNew,
-            idSelect: idNew,
-            groupSelect: groupNew,
-            usernameInput: usernameNew,
-            emailInput: emailNew,
-            applyInitial: true,
+            editBinder.update();
         });
-        newBinder.update();
-
-        // Modal de edicion
-        const modal = document.getElementById('modalEditarUsuario');
-        const editConfig = {
-            tipoSelect: document.getElementById('edit-persona-tipo'),
-            idSelect: document.getElementById('edit-persona-id'),
-            groupSelect: document.getElementById('edit-group'),
-            usernameInput: document.getElementById('edit-username'),
-            emailInput: document.getElementById('edit-email'),
-            applyInitial: false,
-        };
-        setupGroupLock(editConfig.groupSelect);
-        const editBinder = buildPersonaBinder(editConfig);
-
-        if (modal) {
-            modal.addEventListener('show.bs.modal', event => {
-                const button = event.relatedTarget;
-                if (!button?.dataset?.user) {
-                    return;
-                }
-
-                let data;
-                try {
-                    data = JSON.parse(button.dataset.user);
-                } catch (error) {
-                    console.error('No se pudo parsear el dataset del usuario', error);
-                    return;
-                }
-
-                const form = document.getElementById('formEditarUsuario');
-                form.action = "<?= site_url('usuarios') ?>/" + data.id;
-
-                editConfig.usernameInput.value = data.username || '';
-                editConfig.emailInput.value = data.email || '';
-                document.getElementById('edit-active').checked = data.active === 1;
-
-                assignSelectValue(editConfig.groupSelect, data.group || '');
-
-                const tipoSelect = editConfig.tipoSelect;
-                const idSelect = editConfig.idSelect;
-
-                Array.from(tipoSelect.options).forEach(option => option.selected = false);
-                tipoSelect.value = '';
-
-                Array.from(idSelect.options).forEach(option => {
-                    option.selected = false;
-                    option.hidden = false;
-                    if (option.dataset.temp === 'actual') {
-                        option.remove();
-                    }
-                });
-
-                if (data.persona) {
-                    tipoSelect.value = data.persona.tipo;
-                    let option = Array.from(idSelect.options).find(opt =>
-                        Number(opt.value) === Number(data.persona.id) &&
-                        opt.dataset.tipo === data.persona.tipo
-                    );
-
-                    if (!option) {
-                        option = new Option(
-                            (data.persona.tipo === 'profesor' ? 'Profesor: ' : 'Alumno: ') + (data.persona.nombre || ''),
-                            data.persona.id,
-                            true,
-                            true
-                        );
-                        option.dataset.tipo = data.persona.tipo;
-                        option.dataset.temp = 'actual';
-                        option.dataset.group = data.persona.tipo;
-                        option.dataset.nombre = data.persona.nombre || '';
-                        option.dataset.email = data.persona.email || '';
-                        idSelect.insertBefore(option, idSelect.options[1] ?? null);
-                    } else {
-                        option.selected = true;
-                        option.dataset.nombre = option.dataset.nombre || data.persona.nombre || '';
-                        option.dataset.email = option.dataset.email || data.persona.email || '';
-                    }
-                } else {
-                    tipoSelect.value = 'ninguno';
-                }
-
-                filterOptions(idSelect, tipoSelect.value === 'ninguno' ? '' : tipoSelect.value);
-                editBinder.update();
-
-                if (tipoSelect.value === 'ninguno' || tipoSelect.value === '') {
-                    lockGroup(editConfig.groupSelect, '');
-                }
-            });
-        }
-    })();
+    }
+})();
 </script>
 <?= $this->endSection() ?>
 
