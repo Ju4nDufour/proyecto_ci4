@@ -55,15 +55,12 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         });
     });
 
-    // ========== ADMIN + PROFESOR + ALUMNO (TODOS) ==========
-    $routes->group('', ['filter' => 'group:admin,profesor,alumno'], static function (RouteCollection $routes) {
-        // Inscripciones
-        $routes->group('inscripciones', static function (RouteCollection $routes) {
-            $routes->get('/', 'Inscripciones::index');
-            $routes->post('store', 'Inscripciones::store');
-            $routes->post('update/(:num)', 'Inscripciones::update/$1');
-            $routes->post('delete/(:num)', 'Inscripciones::delete/$1');
-        });
+    // ========== ADMIN + PROFESOR + ALUMNO (TODOS LOS AUTENTICADOS) ==========
+    $routes->group('inscripciones', ['filter' => 'group:admin,profesor,alumno'], static function (RouteCollection $routes) {
+        $routes->get('/', 'Inscripciones::index');
+        $routes->post('store', 'Inscripciones::store');
+        $routes->post('update/(:num)', 'Inscripciones::update/$1');
+        $routes->post('delete/(:num)', 'Inscripciones::delete/$1');
     });
 });
 
