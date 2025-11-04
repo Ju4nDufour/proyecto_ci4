@@ -19,33 +19,29 @@
     <table class="table table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th>#</th>
                 <th>Materia</th>
                 <th>Carrera</th>
                 <th style="width:160px">Acciones</th>
             </tr>
         </thead>
         <tbody>
-        <?php $i = 1; foreach ($cursos as $curso): ?>
+        <?php foreach ($cursos as $curso): ?>
             <tr>
-                <td><?= $i++ ?></td>
                 <td><?= esc($curso['nombre']) ?></td>
                 <td><?= esc($carrera) ?></td>
-                <td>
-                  <div class="btn-group btn-group-sm">
-                    <button
-                      class="btn btn-outline-secondary btn-edit"
-                      data-bs-toggle="modal" data-bs-target="#modalCurso" data-mode="edit"
-                      data-id="<?= esc($curso['id_curso']) ?>"
-                      data-nombre="<?= esc($curso['nombre']) ?>"
-                      data-carrera="<?= esc($curso['id_carrera']) ?>"
-                    >Editar</button>
-                    <form method="post" action="<?= site_url('cursos/delete/' . $curso['id_curso']) ?>" onsubmit="return confirm('¿Eliminar curso <?= esc($curso['nombre']) ?>?');" style="display:inline">
-                      <?= csrf_field() ?>
-                      <input type="hidden" name="_method" value="DELETE">
-                      <button class="btn btn-outline-danger">Eliminar</button>
-                    </form>
-                  </div>
+                <td class="text-end">
+                  <button
+                    class="btn btn-sm btn-outline-secondary btn-edit me-1" aria-label="Editar curso" title="Editar"
+                    data-bs-toggle="modal" data-bs-target="#modalCurso" data-mode="edit"
+                    data-id="<?= esc($curso['id_curso']) ?>"
+                    data-nombre="<?= esc($curso['nombre']) ?>"
+                    data-carrera="<?= esc($curso['id_carrera']) ?>"
+                  ><i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span></button>
+                  <form method="post" action="<?= site_url('cursos/delete/' . $curso['id_curso']) ?>" class="d-inline" onsubmit="return confirm('¿Eliminar curso <?= esc($curso['nombre']) ?>?');">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar curso" title="Eliminar"><i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span></button>
+                  </form>
                 </td>
             </tr>
         <?php endforeach; ?>

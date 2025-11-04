@@ -27,37 +27,34 @@
       <table class="table table-hover align-middle">
         <thead class="table-light">
           <tr>
-            <th>#</th><th>DNI</th><th>Nombre y Apellido</th><th>Email</th><th>Fecha Nac.</th><th>Carrera</th><th style="width:160px">Acciones</th>
+            <th>DNI</th><th>Nombre y Apellido</th><th>Email</th><th>Fecha Nac.</th><th>Carrera</th><th style="width:160px">Acciones</th>
           </tr>
         </thead>
         <tbody>
         <?php if (!empty($alumnos)): foreach($alumnos as $a): ?>
           <tr>
-            <td><?= esc($a['id_alumno']) ?></td>
             <td><?= esc($a['dni']) ?></td>
             <td><?= esc($a['nombre']) ?></td>
             <td><?= esc($a['email']) ?></td>
             <td><?= esc($a['fecha_nac']) ?></td>
             <td><?= esc($a['carrera']) ?></td>
-            <td>
-              <div class="btn-group btn-group-sm">
-                <button
-                  class="btn btn-outline-secondary btn-edit"
-                  data-bs-toggle="modal" data-bs-target="#modalAlumno" data-mode="edit"
-                  data-id="<?= esc($a['id_alumno']) ?>"
-                  data-dni="<?= esc($a['dni']) ?>"
-                  data-nombre="<?= esc($a['nombre']) ?>"
-                  data-email="<?= esc($a['email']) ?>"
-                  data-fecha="<?= esc($a['fecha_nac']) ?>"
-                  data-carrera="<?= esc($a['id_carrera']) ?>"
-                >Editar</button>
+            <td class="text-end">
+              <button
+                class="btn btn-sm btn-outline-secondary btn-edit me-1" aria-label="Editar alumno" title="Editar"
+                data-bs-toggle="modal" data-bs-target="#modalAlumno" data-mode="edit"
+                data-id="<?= esc($a['id_alumno']) ?>"
+                data-dni="<?= esc($a['dni']) ?>"
+                data-nombre="<?= esc($a['nombre']) ?>"
+                data-email="<?= esc($a['email']) ?>"
+                data-fecha="<?= esc($a['fecha_nac']) ?>"
+                data-carrera="<?= esc($a['id_carrera']) ?>"
+              ><i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span></button>
 
-                <form method="post" action="<?= site_url('alumnos/'.$a['id_alumno']) ?>" onsubmit="return confirm('¿Eliminar alumno <?= esc($a['nombre']) ?>?');">
-                  <?= csrf_field() ?>
-                  <input type="hidden" name="_method" value="DELETE">
-                  <button class="btn btn-outline-danger">Eliminar</button>
-                </form>
-              </div>
+              <form method="post" action="<?= site_url('alumnos/'.$a['id_alumno']) ?>" class="d-inline" onsubmit="return confirm('¿Eliminar alumno <?= esc($a['nombre']) ?>?');">
+                <?= csrf_field() ?>
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar alumno" title="Eliminar"><i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span></button>
+              </form>
             </td>
           </tr>
         <?php endforeach; else: ?>

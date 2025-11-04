@@ -27,34 +27,33 @@
     <table class="table table-hover align-middle">
       <thead class="table-light">
         <tr>
-          <th>#</th>
           <th>Carrera</th>
-          <th>Código</th>
-          <th style="width:160px">Acciones</th>
+          <th class="text-end" style="width:280px">Acciones</th>
         </tr>
       </thead>
       <tbody>
       <?php $i = 1; foreach($carreras as $c): ?>
         <tr>
-          <td><?= $i++ ?></td>
           <td><?= esc($c['nombre']) ?></td>
-          <td><?= esc($c['codigo']) ?></td>
-          <td>
-            <div class="btn-group btn-group-sm">
-              <button
-                class="btn btn-outline-secondary btn-edit"
-                data-bs-toggle="modal" 
-                data-bs-target="#modalCarrera" 
-                data-mode="edit"
-                data-id="<?= esc($c['id_carrera']) ?>"
-                data-nombre="<?= esc($c['nombre']) ?>"
-                data-codigo="<?= esc($c['codigo']) ?>"
-              >Editar</button>
-              <form method="post" action="<?= site_url('carreras/delete/' . $c['id_carrera']) ?>" onsubmit="return confirm('¿Eliminar carrera <?= esc($c['nombre']) ?>?');" style="display:inline">
-                <?= csrf_field() ?>
-                <button class="btn btn-outline-danger">Eliminar</button>
-              </form>
-            </div>
+          <td class="text-end">
+            <!-- EDITAR en modal -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary btn-edit me-1" aria-label="Editar carrera" title="Editar"
+              data-id="<?= $c['id_carrera'] ?>"
+              data-nombre="<?= esc($c['nombre']) ?>"
+            >
+              <i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span>
+            </button>
+
+            <!-- ELIMINAR (POST + CSRF + confirm) -->
+            <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
+      onsubmit="return confirm('¿Eliminar carrera?');">
+              <?= csrf_field() ?>
+              <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar carrera" title="Eliminar">
+                <i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span>
+              </button>
+            </form>
           </td>
         </tr>
       <?php endforeach; ?>

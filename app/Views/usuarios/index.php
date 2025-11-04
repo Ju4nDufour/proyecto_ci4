@@ -3,7 +3,6 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Gestion de usuarios</h1>
-    <span class="badge bg-secondary">Shield</span>
 </div>
 
 <?php if ($message = session('ok')): ?>
@@ -36,12 +35,12 @@
 
                     <div>
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" required>
+                        <input type="text" name="username" class="form-control" value="<?= old('username') ?>" readonly>
                     </div>
 
                     <div>
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>">
+                        <input type="email" name="email" class="form-control" value="<?= old('email') ?>" readonly>
                     </div>
 
                     <div>
@@ -127,10 +126,8 @@
                     <table class="table align-middle">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Usuario</th>
                                 <th>Email</th>
-                                <th>Grupos</th>
                                 <th>Vinculado a</th>
                                 <th>Activo</th>
                                 <th class="text-end">Acciones</th>
@@ -140,21 +137,12 @@
                         <?php foreach ($usuarios as $usuario): ?>
                             <?php
                                 $grupos = $authorization ? $authorization->getUserGroups($usuario->id) : [];
-                                $gruposLabel = $grupos ? array_map(static fn ($name) => ucfirst($name), $grupos) : [];
                                 $prof   = $profesoresPorUsuario[$usuario->id] ?? null;
                                 $alum   = $alumnosPorUsuario[$usuario->id] ?? null;
                             ?>
                             <tr>
-                                <td><?= esc($usuario->id) ?></td>
                                 <td><?= esc($usuario->username) ?></td>
                                 <td><?= esc($usuario->email) ?></td>
-                                <td>
-                                    <?php if ($gruposLabel): ?>
-                                        <span class="badge bg-info text-dark"><?= esc(implode(', ', $gruposLabel)) ?></span>
-                                    <?php else: ?>
-                                        <span class="text-muted">Sin grupo</span>
-                                    <?php endif; ?>
-                                </td>
                                 <td>
                                     <?php if ($prof): ?>
                                         <span class="badge bg-secondary">Profesor</span>
@@ -175,7 +163,7 @@
                                 </td>
                                 <td class="text-end">
                                     <button
-                                        class="btn btn-sm btn-outline-primary"
+                                        class="btn btn-sm btn-outline-primary me-1" aria-label="Editar usuario" title="Editar"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditarUsuario"
                                         data-user='<?= json_encode([
@@ -199,12 +187,14 @@
                                             ),
                                         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>'
                                     >
-                                        Editar
+                                        <i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span>
                                     </button>
                                     <form action="<?= site_url('usuarios/' . $usuario->id) ?>" method="post" class="d-inline" onsubmit="return confirm('Eliminar usuario?');">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="_method" value="DELETE">
-                                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                        <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar usuario" title="Eliminar">
+                                            <i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -230,11 +220,11 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" name="username" id="edit-username" class="form-control" required>
+                        <input type="text" name="username" id="edit-username" class="form-control" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" id="edit-email" class="form-control">
+                        <input type="email" name="email" id="edit-email" class="form-control" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nuevo password (opcional)</label>
