@@ -48,7 +48,7 @@ $user     = $isLogged ? $auth->user() : null;
                         </li>
                         <li class="nav-item"><a class="nav-link" href="<?= site_url('profesores') ?>">Profesor</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= site_url('alumnos') ?>">Alumno</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras') ?>">Carrera</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= site_url('carreras/admin') ?>">Carrera</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= site_url('cursos') ?>">Curso</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= site_url('inscripciones') ?>">Inscripciones</a></li>
                     

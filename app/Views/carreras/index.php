@@ -3,7 +3,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h1 class="h3 mb-0">Carreras</h1>
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCarrera">+ Nueva carrera</button>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCarrera" data-mode="create">+ Nueva carrera</button>
 </div>
 
 <?php if ($ok = session('ok')): ?>
@@ -24,38 +24,37 @@
 
 <div class="card shadow-sm border-0">
   <div class="card-body">
-    <table class="table table-striped align-middle">
-      <thead>
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
         <tr>
-          <th style="width:90px">#</th>
-          <th>Carreras</th>
-      
-          <th class="text-end" style="width:280px">Acciones</th>
+          <th>#</th>
+          <th>Carrera</th>
+          <th>Código</th>
+          <th style="width:160px">Acciones</th>
         </tr>
       </thead>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       <tbody>
-      <?php foreach($carreras as $c): ?>
+      <?php $i = 1; foreach($carreras as $c): ?>
         <tr>
-          <td><?= $c['id_carrera'] ?></td>
+          <td><?= $i++ ?></td>
           <td><?= esc($c['nombre']) ?></td>
-          <td class="text-end">
-            <!-- EDITAR en modal -->
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary btn-edit"
-              data-id="<?= $c['id_carrera'] ?>"
-              data-nombre="<?= esc($c['nombre']) ?>"
-            >
-              Editar
-            </button>
-
-            <!-- ELIMINAR (POST + CSRF + confirm) -->
-            <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
-      onsubmit="return confirm('¿Eliminar carrera?');">
-              <?= csrf_field() ?>
-              <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-            </form>
+          <td><?= esc($c['codigo']) ?></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <button
+                class="btn btn-outline-secondary btn-edit"
+                data-bs-toggle="modal" 
+                data-bs-target="#modalCarrera" 
+                data-mode="edit"
+                data-id="<?= esc($c['id_carrera']) ?>"
+                data-nombre="<?= esc($c['nombre']) ?>"
+                data-codigo="<?= esc($c['codigo']) ?>"
+              >Editar</button>
+              <form method="post" action="<?= site_url('carreras/delete/' . $c['id_carrera']) ?>" onsubmit="return confirm('¿Eliminar carrera <?= esc($c['nombre']) ?>?');" style="display:inline">
+                <?= csrf_field() ?>
+                <button class="btn btn-outline-danger">Eliminar</button>
+              </form>
+            </div>
           </td>
         </tr>
       <?php endforeach; ?>
@@ -64,81 +63,77 @@
   </div>
 </div>
 
-<!-- Modal CREAR -->
-<div class="modal fade" id="modalCrearCarrera" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <form class="modal-content" method="post" action="<?= site_url('carreras/store') ?>">
+<!-- Modal: Crear / Editar Carrera (reutilizable) -->
+<div class="modal fade" id="modalCarrera" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <form class="modal-content needs-validation" method="post" novalidate>
       <?= csrf_field() ?>
       <div class="modal-header">
-        <h5 class="modal-title">Nueva carrera</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <h5 class="modal-title" id="modalTitle">Nueva carrera</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <div class="mb-3">
+      <div class="modal-body row g-3">
+        <div class="col-md-8">
           <label class="form-label">Nombre</label>
-          <input name="nombre" class="form-control" required>
+          <input name="nombre" id="nombre" type="text" class="form-control" required>
+          <div class="invalid-feedback">Campo obligatorio.</div>
         </div>
-    
+        <div class="col-md-4">
+          <label class="form-label">Código</label>
+          <input name="codigo" id="codigo" type="text" class="form-control" required>
+          <div class="invalid-feedback">Campo obligatorio.</div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary">Guardar</button>
+        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancelar</button>
+        <button class="btn btn-primary" type="submit" id="btnGuardar">Guardar</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal EDITAR -->
-<div class="modal fade" id="modalEditarCarrera" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <form id="formEditarCarrera" class="modal-content" method="post">
-      <?= csrf_field() ?>
-      <div class="modal-header">
-        <h5 class="modal-title">Editar carrera</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label">Nombre</label>
-          <input name="nombre" id="editNombre" class="form-control" required>
-        </div>
-        
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary">Guardar cambios</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- JS para abrir modal de edición y setear acción/valores -->
+<?= $this->section('scripts') ?>
 <script>
-  (function () {
-    const modalEl = document.getElementById('modalEditarCarrera');
-    const modal   = new bootstrap.Modal(modalEl);
-    const form    = document.getElementById('formEditarCarrera');
-    const inputNombre = document.getElementById('editNombre');
-    
+// Reusar modal para crear/editar
+const modal = document.getElementById('modalCarrera');
+modal.addEventListener('show.bs.modal', event => {
+  const btn = event.relatedTarget;
+  const mode = btn.getAttribute('data-mode') || 'create';
+  const form = modal.querySelector('form');
+  const title = modal.querySelector('#modalTitle');
 
-    // ⚠️ NUEVO: base correcta usando site_url
-    const updateBase = "<?= site_url('carreras/update') ?>";
+  // Limpio estado
+  form.reset();
+  form.classList.remove('was-validated');
 
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id     = btn.dataset.id;
-        const nombre = btn.dataset.nombre;
-        
+  if (mode === 'edit') {
+    title.textContent = 'Editar carrera';
+    const id = btn.dataset.id;
+    form.action = "<?= site_url('carreras/update/') ?>" + id;
 
-        inputNombre.value = nombre;
-        
+    // Cargo datos
+    document.getElementById('nombre').value = btn.dataset.nombre || '';
+    document.getElementById('codigo').value = btn.dataset.codigo || '';
+  } else {
+    title.textContent = 'Nueva carrera';
+    form.action = "<?= site_url('carreras/store') ?>";
+  }
+});
 
-        // 👇 Queda /proyecto_ci4/public/carreras/update/{id}
-        form.action = `${updateBase}/${id}`;
-
-        modal.show();
-      });
-    });
-  })();
+// Validación Bootstrap
+(() => {
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', e => {
+      if (!form.checkValidity()) { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+      }
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
 </script>
-
+<?= $this->endSection() ?>
 
 <?= $this->endSection() ?>

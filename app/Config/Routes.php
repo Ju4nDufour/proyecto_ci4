@@ -8,9 +8,6 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Dashboard::index');
 $routes->get('dashboard', 'Dashboard::index');
 
-// ✅ RUTA PÚBLICA: visible sin login
-$routes->get('carreras', 'CarrerasPublic::index');
-
 // LOGOUT - Definido ANTES de los grupos con filtros
 $routes->get('logout', 'Auth\LogoutController::logoutAction');
 
@@ -34,14 +31,12 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
             $routes->delete('(:num)', 'Alumnos::delete/$1');
         });
 
-        // Carreras (CRUD)
-        $routes->group('carreras', static function (RouteCollection $routes) {
-            $routes->get('/', 'CarrerasController::index');
-            $routes->post('store', 'CarrerasController::store');
-            $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
-            $routes->post('update/(:num)', 'CarrerasController::update/$1');
-            $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
-        });
+        // Carreras (CRUD) - CON PREFIJO DIFERENTE
+        $routes->get('carreras/admin', 'CarrerasController::index');
+        $routes->post('carreras/store', 'CarrerasController::store');
+        $routes->get('carreras/edit/(:num)', 'CarrerasController::edit/$1');
+        $routes->post('carreras/update/(:num)', 'CarrerasController::update/$1');
+        $routes->post('carreras/delete/(:num)', 'CarrerasController::delete/$1');
 
         // Cursos
         $routes->group('cursos', static function (RouteCollection $routes) {
@@ -71,6 +66,9 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         });
     });
 });
+
+// ✅ RUTA PÚBLICA: visible sin login
+$routes->get('carreras', 'CarrerasPublic::index');
 
 // Rutas de autenticación de Shield (login, registro, etc.)
 $routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static function (RouteCollection $routes) {
