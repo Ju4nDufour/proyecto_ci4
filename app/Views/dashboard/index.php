@@ -188,24 +188,6 @@ $user = $isLogged ? $auth->user() : null;
                 </div>
             </div>
 
-            <!-- Noticia 2 -->
-            <div class="news-card">
-                <div class="card-body">
-                    <span class="badge badge-info mb-2">Académico</span>
-                    <h5 class="card-title mb-2">
-                        <i class="bi bi-award-fill text-info me-1"></i>
-                        Nuevo Curso de Big Data
-                    </h5>
-                    <p class="card-text small text-muted mb-2">
-                        Lanzamos nuestra nueva especialización en análisis de datos 
-                        aplicado al ámbito empresarial y educativo.
-                    </p>
-                    <small class="text-primary">
-                        <i class="bi bi-calendar-event me-1"></i>Comienza en marzo 2026
-                    </small>
-                </div>
-            </div>
-
             <!-- Noticia 3 -->
             <div class="news-card">
                 <div class="card-body">

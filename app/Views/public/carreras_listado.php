@@ -11,9 +11,6 @@
                     <div class="card shadow-sm h-100 border-0">
                         <div class="card-body">
                             <h5 class="card-title text-success mb-2"><?= esc($c['nombre']) ?></h5>
-                            <p class="card-text text-muted mb-0">
-                                <strong>Código:</strong> <?= esc($c['codigo']) ?>
-                            </p>
                         </div>
                     </div>
                 </div>

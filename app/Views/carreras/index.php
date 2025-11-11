@@ -48,7 +48,7 @@
             </button>
 
             <!-- ELIMINAR (POST + CSRF + confirm) -->
-            <form action="<?= site_url('carreras/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
+            <form action="<?= site_url('carreras/admin/delete/'.$c['id_carrera']) ?>" method="post" class="d-inline"
       onsubmit="return confirm('¿Eliminar carrera?');">
               <?= csrf_field() ?>
               <button class="btn btn-sm btn-outline-danger" aria-label="Eliminar carrera" title="Eliminar">
@@ -66,7 +66,7 @@
 <!-- Modal CREAR -->
 <div class="modal fade" id="modalCrearCarrera" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form class="modal-content" method="post" action="<?= site_url('carreras/store') ?>">
+    <form class="modal-content" method="post" action="<?= site_url('carreras/admin/store') ?>">
       <?= csrf_field() ?>
       <div class="modal-header">
         <h5 class="modal-title">Nueva carrera</h5>
@@ -119,7 +119,7 @@
     
 
     // ⚠️ NUEVO: base correcta usando site_url
-    const updateBase = "<?= site_url('carreras/update') ?>";
+    const updateBase = "<?= site_url('carreras/admin/update') ?>";
 
     document.querySelectorAll('.btn-edit').forEach(btn => {
       btn.addEventListener('click', () => {
