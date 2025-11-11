@@ -28,7 +28,6 @@
       <thead>
         <tr>
           <th>Nombre</th>
-          <th>Codigo</th>
           <th>Descripcion</th>
           <th class="text-end" style="width:280px">Acciones</th>
         </tr>
@@ -37,7 +36,6 @@
       <?php foreach($carreras as $c): ?>
         <tr>
           <td><?= esc($c['nombre']) ?></td>
-          <td><?= esc($c['codigo']) ?></td>
           <td class="text-muted small"><?= esc($c['descripcion'] ?? 'Sin descripcion') ?></td>
           <td class="text-end">
             <!-- EDITAR en modal -->
@@ -46,7 +44,6 @@
               class="btn btn-sm btn-outline-secondary btn-edit me-1" aria-label="Editar carrera" title="Editar"
               data-id="<?= $c['id_carrera'] ?>"
               data-nombre="<?= esc($c['nombre']) ?>"
-              data-codigo="<?= esc($c['codigo'], 'attr') ?>"
               data-descripcion="<?= esc($c['descripcion'] ?? '', 'attr') ?>"
             >
               <i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span>
@@ -82,10 +79,6 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" class="form-control" required>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Codigo</label>
-          <input name="codigo" class="form-control" maxlength="10" required>
-        </div>
         <div>
           <label class="form-label">Descripcion</label>
           <textarea name="descripcion" class="form-control" rows="3" placeholder="Breve descripcion de la carrera"></textarea>
@@ -112,10 +105,6 @@
           <label class="form-label">Nombre</label>
           <input name="nombre" id="editNombre" class="form-control" required>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Codigo</label>
-          <input name="codigo" id="editCodigo" class="form-control" maxlength="10" required>
-        </div>
         <div>
           <label class="form-label">Descripcion</label>
           <textarea name="descripcion" id="editDescripcion" class="form-control" rows="3"></textarea>
@@ -128,37 +117,31 @@
   </div>
 </div>
 
-<!-- JS para abrir modal de edicion y setear accion/valores -->
+<?= $this->endSection() ?>
+<?= $this->section('scripts') ?>
 <script>
-  (function () {
+  document.addEventListener('DOMContentLoaded', () => {
     const modalEl = document.getElementById('modalEditarCarrera');
-    const modal   = new bootstrap.Modal(modalEl);
     const form    = document.getElementById('formEditarCarrera');
     const inputNombre = document.getElementById('editNombre');
-    const inputCodigo = document.getElementById('editCodigo');
     const inputDescripcion = document.getElementById('editDescripcion');
-
+    const modal   = modalEl ? new bootstrap.Modal(modalEl) : null;
     const updateBase = "<?= site_url('carreras/admin/update') ?>";
+
+    if (!modal) {
+      return;
+    }
 
     document.querySelectorAll('.btn-edit').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id     = btn.dataset.id;
-        const nombre = btn.dataset.nombre;
-        const codigo = btn.dataset.codigo || '';
-        const descripcion = btn.dataset.descripcion || '';
-
-        inputNombre.value = nombre;
-        inputCodigo.value = codigo;
-        inputDescripcion.value = descripcion;
-        form.action = `${updateBase}/${id}`;
-
+        inputNombre.value = btn.dataset.nombre || '';
+        inputDescripcion.value = btn.dataset.descripcion || '';
+        form.action = `${updateBase}/${btn.dataset.id}`;
         modal.show();
       });
     });
-  })();
+  });
 </script>
-
-
 <?= $this->endSection() ?>
 
 

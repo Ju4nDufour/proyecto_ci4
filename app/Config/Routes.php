@@ -38,7 +38,6 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
         $routes->group('carreras', static function (RouteCollection $routes) {
             $routes->get('admin', 'CarrerasController::index');
             $routes->post('admin/store', 'CarrerasController::store');
-            $routes->get('admin/edit/(:num)', 'CarrerasController::edit/$1');
             $routes->post('admin/update/(:num)', 'CarrerasController::update/$1');
             $routes->post('admin/delete/(:num)', 'CarrerasController::delete/$1');
         });

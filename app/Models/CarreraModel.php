@@ -8,6 +8,6 @@ class CarreraModel extends Model
 {
     protected $table            = 'carrera';
     protected $primaryKey       = 'id_carrera';
-    protected $allowedFields    = ['nombre', 'codigo'];
+    protected $allowedFields    = ['nombre', 'codigo', 'descripcion'];
     protected $useTimestamps    = false;
 }

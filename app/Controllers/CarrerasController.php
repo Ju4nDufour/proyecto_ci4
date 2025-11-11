@@ -26,7 +26,7 @@ class CarrerasController extends BaseController
     public function store()
     {
         $model = new CarreraModel();
-        $data  = $this->request->getPost(['nombre','codigo']);
+        $data  = $this->request->getPost(['nombre','codigo','descripcion']);
 
         if (!$model->insert($data)) {
             return redirect()->back()->with('errors',$model->errors())->withInput();
@@ -39,7 +39,7 @@ class CarrerasController extends BaseController
     public function update($id_carrera)
     {
         $model = new CarreraModel();
-        $data  = $this->request->getPost(['nombre','codigo']);
+        $data  = $this->request->getPost(['nombre','codigo','descripcion']);
 
         if (!$model->update($id_carrera, $data)) {
             return redirect()->back()->with('errors',$model->errors())->withInput();
