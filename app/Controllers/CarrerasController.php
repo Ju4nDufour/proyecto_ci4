@@ -26,7 +26,12 @@ class CarrerasController extends BaseController
     public function store()
     {
         $model = new CarreraModel();
-        $data  = $this->request->getPost(['nombre','codigo','descripcion']);
+        $nombre = (string) $this->request->getPost('nombre');
+        $data   = [
+            'nombre'      => $nombre,
+            'descripcion' => $this->request->getPost('descripcion'),
+        ];
+        $data['codigo'] = $this->generarCodigo($nombre);
 
         if (!$model->insert($data)) {
             return redirect()->back()->with('errors',$model->errors())->withInput();
@@ -39,7 +44,10 @@ class CarrerasController extends BaseController
     public function update($id_carrera)
     {
         $model = new CarreraModel();
-        $data  = $this->request->getPost(['nombre','codigo','descripcion']);
+        $data  = [
+            'nombre'      => $this->request->getPost('nombre'),
+            'descripcion' => $this->request->getPost('descripcion'),
+        ];
 
         if (!$model->update($id_carrera, $data)) {
             return redirect()->back()->with('errors',$model->errors())->withInput();
@@ -47,30 +55,46 @@ class CarrerasController extends BaseController
         return redirect()->to('/carreras')->with('ok','Carrera actualizada');
     }
 
-public function delete($id_carrera)
-{
-    $carreraModel = new \App\Models\CarreraModel();
-    $alumnoModel  = new \App\Models\AlumnoModel(); // asegúrate de tener este modelo
+    public function delete($id_carrera)
+    {
+        $carreraModel = new \App\Models\CarreraModel();
+        $alumnoModel  = new \App\Models\AlumnoModel();
 
-    // 1) Chequeo previo: ¿hay alumnos inscriptos?
-    $total = $alumnoModel->where('id_carrera', $id_carrera)->countAllResults();
+        $total = $alumnoModel->where('id_carrera', $id_carrera)->countAllResults();
 
-    if ($total > 0) {
-        return redirect()->to('/carreras')->with('errors', [
-            "La carrera no se puede eliminar porque hay $total alumno(s) inscriptos."
-        ]);
+        if ($total > 0) {
+            return redirect()->to('/carreras')->with('errors', [
+                "La carrera no se puede eliminar porque hay $total alumno(s) inscriptos."
+            ]);
+        }
+
+        try {
+            $carreraModel->delete($id_carrera);
+            return redirect()->to('/carreras')->with('ok', 'Carrera eliminada');
+        } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
+            return redirect()->to('/carreras')->with('errors', [
+                'La carrera no se puede eliminar porque tiene registros relacionados (alumnos/cursos).'
+            ]);
+        }
     }
 
-    // 2) Si no hay, intentar borrar
-    try {
-        $carreraModel->delete($id_carrera);
-        return redirect()->to('/carreras')->with('ok', 'Carrera eliminada');
-    } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
-        // Por si hay otras FKs (p.ej., cursos)
-        return redirect()->to('/carreras')->with('errors', [
-            'La carrera no se puede eliminar porque tiene registros relacionados (alumnos/cursos).'
-        ]);
-    }
-}
+    private function generarCodigo(string $nombre): string
+    {
+        $base = strtoupper(substr(preg_replace('/[^A-Z]/', '', $nombre), 0, 3));
+        if ($base === '') {
+            $base = 'CAR';
+        }
 
+        $codigo = $base;
+        $sufijo = 1;
+        $model  = new CarreraModel();
+
+        while ($model->where('codigo', $codigo)->countAllResults() > 0) {
+            $codigo = $base . $sufijo;
+            $sufijo++;
+            $model = new CarreraModel();
+        }
+
+        return $codigo;
+    }
 }
