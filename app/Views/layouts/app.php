@@ -88,7 +88,7 @@ $user     = $isLogged ? $auth->user() : null;
                     
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('inscripciones') ?>">
-                            <i class="bi bi-clipboard-check"></i> Inscripciones
+                            <i class="bi bi-clipboard-check"></i> Inscripcion
                         </a>
                     </li>
                     
