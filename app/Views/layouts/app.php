@@ -177,10 +177,8 @@ $user     = $isLogged ? $auth->user() : null;
 
         <div class="text-center text-white-50">
             <small>
-                &copy; <?= date('Y') ?> Instituto Superior N° 57 - Chascomús. 
+                &copy; <?= date('Y') ?> Instituto Superior N° 57 - Chascomús.
                 Todos los derechos reservados.
-                <span class="mx-2">|</span>
-                Diseñado con <i class="bi bi-heart-fill text-danger"></i>
             </small>
         </div>
     </div>
