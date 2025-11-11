@@ -34,13 +34,13 @@ $routes->group('', ['filter' => 'session'], static function (RouteCollection $ro
             $routes->delete('(:num)', 'Alumnos::delete/$1');
         });
 
-        // Carreras (CRUD)
+        // Carreras (CRUD Admin)
         $routes->group('carreras', static function (RouteCollection $routes) {
-            $routes->get('/', 'CarrerasController::index');
-            $routes->post('store', 'CarrerasController::store');
-            $routes->get('edit/(:num)', 'CarrerasController::edit/$1');
-            $routes->post('update/(:num)', 'CarrerasController::update/$1');
-            $routes->post('delete/(:num)', 'CarrerasController::delete/$1');
+            $routes->get('admin', 'CarrerasController::index');
+            $routes->post('admin/store', 'CarrerasController::store');
+            $routes->get('admin/edit/(:num)', 'CarrerasController::edit/$1');
+            $routes->post('admin/update/(:num)', 'CarrerasController::update/$1');
+            $routes->post('admin/delete/(:num)', 'CarrerasController::delete/$1');
         });
 
         // Cursos
